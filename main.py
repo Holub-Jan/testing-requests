@@ -21,8 +21,14 @@ class GitHubRepo:
 
         return self.status_code(), self.text_response()
 
-    def create_repo(self):
-        self.request = requests.put(self.url, headers=self.headers, data=self.data)
+    def create_repo(self, new_repo_name):
+        self.data['name'] = new_repo_name
+        self.data['description'] = 'Repository created by python/requests.'
+
+        self.url = f'https://api.github.com/orgs/{self.org_name}/repos'
+
+        print(self.data)
+        self.request = requests.post(self.url, headers=self.headers, data=self.data)
 
         return self.status_code(), self.text_response()
 
@@ -64,7 +70,7 @@ class GitHubRepo:
 
 request = GitHubRepo('standa-novak')
 
-resp_code, resp = request.list_repos()
+resp_code, resp = request.create_repo('new-repo-name-here')
 
 print(resp_code)
 print(resp)
