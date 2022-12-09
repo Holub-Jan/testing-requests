@@ -1,0 +1,90 @@
+Objects:
+1. GitHub communicator
+2. team manager
+3. database connector
+4. SSH manager
+5. Reconcile handler
+6. Application (project CLI)
+
+GitHub - functions
+- list repos in org
+- edit repo in org
+- create repo in org
+- delete repo in org
+- get connection status
+- connect to specific org
+
+SSH manager - functions
+- generate new ssh with info
+- save ssh info
+- show ssh by id
+- link ssh with api - low prio
+
+DB manager - functions
+- save data?
+- load data?
+???
+
+Team manager - functions
+- create team
+- edit team
+- delete team
+- link team with role
+- unlink team
+- add user
+- remove user
+
+Reconcile handler (in runner)- functions
+- check everything is fine on GitHub vs db
+
+All data:
+organizations as or
+------------
+org_id PK int
+name varchar(200) UNIQUE
+
+repositories as re
+------
+repo_id PK int
+org_id int FK >- or.org_id
+name varchar(200) UNIQUE
+
+teams as tm
+----
+team_id PK int
+repo_id int FK >- re.repo_id
+name UNIQUE string
+role UNIQUE string
+
+users as u
+--
+user_id PK int
+team_id int FK >- tm.team_id
+name UNIQUE string
+
+keys as k
+----
+key_id PK int
+repo_id int FK >- re.repo_id
+name UNIQUE string
+
+
+Todo:
+1. create db, basic functions for comunication  - #done
+2. github link to get information for the db
+3. save basic github info to db
+4. get some comands to work
+ghb login {org} --token {token}
+ghb logout
+ghb status - #done
+ghb repo list
+ghb repo create {repo_name} - #done
+ghb repo edit {repo_name} --name {new_repo_name} - #done
+ghb repo delete {repo_name}
+ghb reconsile
+5. figure out how teams work
+...
+
+
+Question?
+- library doesnt have function for deleting tables, can create my own, do i need it?
