@@ -38,40 +38,53 @@ Reconcile handler (in runner)- functions
 - check everything is fine on GitHub vs db
 
 All data:
-Organization as or
+organizations as or
 ------------
-OrgID PK int
-Name varchar(200) UNIQUE
+org_id PK int
+name varchar(200) UNIQUE
 
-Repository as re
+repositories as re
 ------
-RepoID PK int
-OrgID int FK >- or.OrgID
-Name varchar(200) UNIQUE
+repo_id PK int
+org_id int FK >- or.org_id
+name varchar(200) UNIQUE
 
-Teams as tm
+teams as tm
 ----
-TeamID PK int
-RepoID int FK >- re.RepoID
-Name UNIQUE string
-Role UNIQUE string
+team_id PK int
+repo_id int FK >- re.repo_id
+name UNIQUE string
+role UNIQUE string
 
-Users as u
+users as u
 --
-UserID PK int
-TeamID int FK >- tm.TeamID
-Name UNIQUE string
+user_id PK int
+team_id int FK >- tm.team_id
+name UNIQUE string
 
-Keys as k
+keys as k
 ----
-KeyID PK int
-RepoID int FK >- re.RepoID
-Name UNIQUE string
+key_id PK int
+repo_id int FK >- re.repo_id
+name UNIQUE string
 
 
 Todo:
-1. how to work with db
-2. create basic object for db connector
-3. basic object for app
-4. basic object for the rest
+1. create db, basic functions for comunication  - #done
+2. github link to get information for the db
+3. save basic github info to db
+4. get some comands to work
+ghb login {org} --token {token}
+ghb logout
+ghb status - #done
+ghb repo list
+ghb repo create {repo_name} - #done
+ghb repo edit {repo_name} --name {new_repo_name} - #done
+ghb repo delete {repo_name}
+ghb reconsile
+5. figure out how teams work
 ...
+
+
+Question?
+- library doesnt have function for deleting tables, can create my own, do i need it?
