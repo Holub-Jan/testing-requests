@@ -42,6 +42,7 @@ organizations as or
 ------------
 org_id PK int
 name varchar(200) UNIQUE
+active int
 
 repositories as re
 ------
@@ -88,3 +89,6 @@ ghb reconsile
 
 Question?
 - library doesnt have function for deleting tables, can create my own, do i need it?
+
+Stuff:
+- currently db has 2 types of indexing, can remove one
