@@ -79,20 +79,8 @@ name UNIQUE string
 
 
 Todo:
-1. create db, basic functions for comunication  - #done
-2. github link to get information for the db
-3. save basic github info to db
-4. get some comands to work
-ghb login {org} --token {token}
-ghb logout
-ghb status - #done
-ghb repo list
-ghb repo create {repo_name} - #done
-ghb repo edit {repo_name} --name {new_repo_name} - #done
-ghb repo delete {repo_name}
-ghb reconsile
-5. figure out how teams work
-...
+1. Iam starting to lose track, time to comment on every function
+2. Idk, check TODO list
 
 
 Question?
@@ -108,10 +96,3 @@ Teams
 	write
 	maintain
 	admin
-"permissions":{
-	"admin":true,
-	"maintain":true,
-	"push":true,
-	"triage":true,
-	"pull":true
-	}
