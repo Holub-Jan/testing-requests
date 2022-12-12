@@ -26,16 +26,15 @@ class CLI:
         self._db_pass = pass_line.split(' ')[1]
 
     def _load_org_info(self):
-
         org_id = self._check_org(self._org_name)
-        msg_type, data = self.gh_link.get_org_info()
+        msg_type, repo_list, teams_list = self.gh_link.get_org_info()
 
         if msg_type == 'ok':
-            data = json.loads(data)
+            clean_repo_list = json.loads(repo_list)
             col = 'name'
-            for table in data:
+            for table in clean_repo_list:
                 print(f'Repository name: {table[col]}')
-                not_in = self.db.db_table_check('repositories', col, table[col])
+                not_in, table_len = self.db.db_table_check('repositories', col, table[col])
                 repo_id = self._check_repo(table[col], org_id)
 
                 if not_in:
@@ -46,7 +45,7 @@ class CLI:
                 else:
                     print(f'Repository [ {table[col]} ] is in db.\n')
         else:
-            print(f'An error has occurred: {data}')
+            print(f'An error has occurred: {repo_list}')
 
     def _check_org(self, org_name):
         col = 'name'
@@ -84,7 +83,26 @@ class CLI:
         # TODO : create function for setting active org
         pass
 
+    def _check_teams(self, org_name):
+        # TODO : not done
+        col = 'name'
+        table_name = 'teams'
+        not_in, table_len = self.db.db_table_check(table_name, col, org_name)
+
+        if not_in:
+            data = [org_name, 0]
+            self.db.add_to_table(table_name, data)
+
+            return table_len
+
+        else:
+            org_id = self.db.get_value(table_name, 'name', org_name, 'ID')
+
+            return org_id
+
     def test_run(self):
+        print(self.gh_link.check_team_repo_permission('test-team', 'renamed-repo'))
+
         print()
         for table in self.db.get_all_tables():
             print(self.db.get_table(table[0]))
@@ -100,6 +118,7 @@ class CLI:
         '''
 
 
-x = CLI()
+if __name__ == "__main__":
+    x = CLI()
 
-x.test_run()
+    x.test_run()

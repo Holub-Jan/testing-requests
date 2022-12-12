@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 
@@ -50,25 +52,79 @@ class GitHubLink:
             print('Organization not specified!')
 
     def get_org_info(self):
-        # org name - get db for ord_id
-        # all repo names - list repo
         error_check = False
         error_messages = list()
 
         repo_list_resp, repo_list = self.list_repos()
+        team_list_resp, team_list = self.list_teams()
 
         if repo_list_resp == 'error':
             error_check = True
+            error_messages.append(repo_list)
+
+        if team_list_resp == 'error':
+            error_check = True
+            error_messages.append(team_list)
 
         if error_check:
             return 'error', error_messages
 
-        return 'ok', repo_list[1]
+        return 'ok', repo_list[1], team_list[1]
+
+    def list_teams(self):
+        url = f'{self.url}orgs/{self.org_name}/teams'
+        response = requests.get(url, headers=self.headers)
+
+        return self._eval_response(response)
+
+    def get_team_by_name(self, team_name):
+        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}'
+        response = requests.get(url, headers=self.headers)
+
+        return self._eval_response(response)
+
+    def check_team_repo_permission(self, team_name, repo_name):
+        # TODO : not done?
+        self.headers['Accept'] = 'application/vnd.github.v3.repository+json'
+        repo_data = json.loads(self.list_repos()[1][1])
+        owner = False
+
+        for repo in repo_data:
+            if repo['name'] == repo_name:
+                owner = repo['owner']['login']
+
+        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/repos/{owner}/{repo_name}'
+        response = requests.get(url, headers=self.headers)
+
+        msg_type, data = self._eval_response(response)
+        permission_data = json.loads(data[1])
+
+        role_name = permission_data['role_name']
+
+        if msg_type == 'ok':
+            return msg_type, [data[0], role_name]
+        else:
+            return msg_type, data
+
+    def create_team(self):
+        # TODO : ?
+        pass
+
+    def update_team(self):
+        # TODO : ?
+        pass
+
+    def delete_team(self):
+        # TODO : ?
+        pass
+
+    def list_team_repos(self):
+        # TODO : ?
+        pass
 
     @staticmethod
     def _eval_response(resp):
-        if resp.status_code == 400:
+        if resp.status_code in [400, 404]:
             return 'error', f'Status code: {resp.status_code}\nResponse: {resp.text}'
         else:
             return 'ok', [resp.status_code, resp.text]
-

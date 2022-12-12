@@ -51,19 +51,27 @@ org_id int FK >- or.org_id
 name varchar(200) UNIQUE
 
 teams as tm
-----
+------
 team_id PK int
+org_id int FK >- or.org_id
+name string
+
+team-repos as tr
+----
+team-repos-id PK int
+team-id int FK >- tm.team_id
 repo_id int FK >- re.repo_id
-name UNIQUE string
-role UNIQUE string
+name string
+role string
+
 
 users as u
---
+----
 user_id PK int
 team_id int FK >- tm.team_id
 name UNIQUE string
 
-keys as k
+keys as k?
 ----
 key_id PK int
 repo_id int FK >- re.repo_id
@@ -92,3 +100,18 @@ Question?
 
 Stuff:
 - currently db has 2 types of indexing, can remove one
+
+Teams
+- types:
+	read
+	triage
+	write
+	maintain
+	admin
+"permissions":{
+	"admin":true,
+	"maintain":true,
+	"push":true,
+	"triage":true,
+	"pull":true
+	}

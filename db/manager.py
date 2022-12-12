@@ -9,6 +9,8 @@ class DBManager:
         self._db_path = os.path.realpath('../db/pysqlitecipher.db')
         self.db = sqlitewrapper.SqliteCipher(dataBasePath=self._db_path, checkSameThread=False, password=self.password)
 
+        # self._gen_empty_db()
+
     def new_table(self, table_name, table_data):
         self.db.createTable(table_name, table_data, makeSecure=True, commit=True)
 
@@ -52,6 +54,7 @@ class DBManager:
         self._gen_org_table()
         self._gen_repo_table()
         self._gen_team_table()
+        self._gen_team_repos_table()
         self._gen_key_table()
         self._gen_user_table()
 
@@ -75,7 +78,16 @@ class DBManager:
         table_name = 'teams'
         table_columns = [
             ['name', 'TEXT'],
+            ['org_id', 'INT']
+        ]
+        self.new_table(table_name, table_columns)
+
+    def _gen_team_repos_table(self):
+        table_name = 'teamRepos'
+        table_columns = [
+            ['name', 'TEXT'],
             ['repo_id', 'INT'],
+            ['team_id', 'INT'],
             ['role', 'TEXT']
         ]
         self.new_table(table_name, table_columns)
