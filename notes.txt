@@ -56,7 +56,7 @@ team_id PK int
 org_id int FK >- or.org_id
 name string
 
-team-repos as tr
+team_repos as tr
 ----
 team-repos-id PK int
 team-id int FK >- tm.team_id
