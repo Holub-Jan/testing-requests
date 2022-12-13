@@ -79,11 +79,11 @@ name UNIQUE string
 
 Todo:
 1. Iam starting to lose track, time to comment on every function
-2. Idk, check TODO list
-
-
-Question?
-- library doesnt have function for deleting tables, can create my own, do i need it?
+2. SSH stuff, what, how, where, when, why
+3. merge
+4. new branch - command structure
+5. can we rename organization? need more data
+6. CLI library
 
 Stuff:
 - what about removing stuff from db if its missing from github and not db
