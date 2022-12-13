@@ -8,7 +8,7 @@ class CLI:
         self._gh_token = str()
         self._db_pass = str()
         self._org_name = 'standa-novak'
-        self._print_details = True
+        self._print_details = False
 
         self._load_secrets()
 
@@ -55,7 +55,8 @@ class CLI:
                 for item, value in self._check_team_repos(team_name).items():
                     self._added_check('Team repository', item, value)
 
-                self._check_team_members(team_name)
+                for item, value in self._check_team_members(team_name, team_id).items():
+                    self._added_check('Users', item, value)
 
             print(f'## Organization {self._org_name} loaded. ##')
         else:
@@ -136,20 +137,33 @@ class CLI:
 
         return team_repos_states
 
-    def _check_team_members(self, team_name):
+    def _check_team_members(self, team_name, team_id):
         msg_type, (msg_code, user_list) = self.gh_link.list_team_members(team_name)
-
+        user_states = dict()
         clean_user_list = json.loads(user_list)
 
         for user in clean_user_list:
-            # TODO : here continue
-            print(user['login'])
+            data = [user['login'], team_id]
+            not_in, table_len = self.db.db_table_check('users', ['name', 'team_id'], data)
 
-    def _set_active_org(self):
+            if not_in:
+                self.db.add_to_table('users', data)
+
+            user_states[user['login']] = not_in
+
+        return user_states
+
+    def _set_active_org(self, new_org):
         # TODO : create function for setting active org
-        pass
+        self._org_name = new_org
 
     def test_run(self):
+        """ In case of deleting table rows
+        self.db.delete_table_row('users', 0, False)
+        self.db.delete_table_row('users', 1, False)
+        self.db.update_ids('users')
+        """
+
         print()
         for table in self.db.get_all_tables():
             print(self.db.get_table(table[0]))

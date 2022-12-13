@@ -99,7 +99,7 @@ class DBManager:
         ]
         self.new_table(table_name, table_columns)
 
-    def _gen_key_table(self):
+    def _gen_user_table(self):
         table_name = 'users'
         table_columns = [
             ['name', 'TEXT'],
@@ -107,7 +107,7 @@ class DBManager:
         ]
         self.new_table(table_name, table_columns)
 
-    def _gen_user_table(self):
+    def _gen_key_table(self):
         table_name = 'keys'
         table_columns = [
             ['name', 'TEXT'],
