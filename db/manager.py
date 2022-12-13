@@ -20,27 +20,34 @@ class DBManager:
     def add_to_table(self, table_name, table_data):
         self.db.insertIntoTable(table_name, table_data, commit=True)
 
+    def delete_table_row(self, table_name, row, update_id):
+        self.db.deleteDataInTable(table_name, row, commit=True, raiseError=True, updateId=update_id)
+
+    def update_ids(self, table_name):
+        self.db.updateIDs(table_name, commit=True)
+
     def get_all_tables(self):
         return self.db.getAllTableNames()
-
-    def delete_table(self, table_name):
-        # TODO : how do we do this? lib doesnt have delete table function
-        pass
 
     def desc_table(self, table_name):
         return self.db.describeTable(table_name)
 
-    def db_table_check(self, table_name, col, value):
-        # TODO : if needed, add function for checking multiple variables
+    def db_table_check(self, table_name, cols, values):
         table_names, table_data = self.get_table(table_name)
         not_in = True
+
         for row in table_data:
-            if row[table_names.index(col)] == value:
+            row_data = list()
+            for col in cols:
+                row_data.append(row[table_names.index(col)])
+
+            if row_data == values:
                 not_in = False
 
         return not_in, len(table_data)
 
     def get_value(self, table_name, in_col, value, out_col):
+        # Check if value is present in specific table
         table_names, table_data = self.get_table(table_name)
         not_in = True
 

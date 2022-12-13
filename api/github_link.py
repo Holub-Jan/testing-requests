@@ -9,6 +9,7 @@ class GitHubLink:
         self.org_name = org_name
         self.token = token
 
+        # TODO : remove slash, add it elsewhere
         self.url = 'https://api.github.com/'
         self.headers = {'Accept': 'application/vnd.github+json'}
 
@@ -69,7 +70,7 @@ class GitHubLink:
         if error_check:
             return 'error', error_messages
 
-        return 'ok', repo_list[1], team_list[1]
+        return 'ok', (repo_list[1], team_list[1])
 
     def list_teams(self):
         url = f'{self.url}orgs/{self.org_name}/teams'
@@ -84,8 +85,9 @@ class GitHubLink:
         return self._eval_response(response)
 
     def check_team_repo_permission(self, team_name, repo_name):
-        # TODO : not done?
+        # Checks specific repo teams permission
         self.headers['Accept'] = 'application/vnd.github.v3.repository+json'
+        # TODO : might be issue
         repo_data = json.loads(self.list_repos()[1][1])
         owner = False
 
@@ -118,12 +120,21 @@ class GitHubLink:
         # TODO : ?
         pass
 
-    def list_team_repos(self):
-        # TODO : ?
-        pass
+    def list_team_repos(self, team_name):
+        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/repos'
+        response = requests.get(url, headers=self.headers)
+
+        return self._eval_response(response)
+
+    def list_team_members(self, team_name):
+        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/members'
+        response = requests.get(url, headers=self.headers)
+
+        return self._eval_response(response)
 
     @staticmethod
     def _eval_response(resp):
+        # TODO : check resp.text to json
         if resp.status_code in [400, 404]:
             return 'error', f'Status code: {resp.status_code}\nResponse: {resp.text}'
         else:

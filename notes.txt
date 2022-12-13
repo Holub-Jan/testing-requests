@@ -59,11 +59,10 @@ name string
 team_repos as tr
 ----
 team-repos-id PK int
-team-id int FK >- tm.team_id
+team_id int FK >- tm.team_id
 repo_id int FK >- re.repo_id
 name string
 role string
-
 
 users as u
 ----
@@ -87,7 +86,7 @@ Question?
 - library doesnt have function for deleting tables, can create my own, do i need it?
 
 Stuff:
-- currently db has 2 types of indexing, can remove one
+- what about removing stuff from db if its missing from github and not db
 
 Teams
 - types:

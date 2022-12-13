@@ -8,6 +8,7 @@ class CLI:
         self._gh_token = str()
         self._db_pass = str()
         self._org_name = 'standa-novak'
+        self._print_details = True
 
         self._load_secrets()
 
@@ -26,83 +27,129 @@ class CLI:
         self._db_pass = pass_line.split(' ')[1]
 
     def _load_org_info(self):
-        org_id = self._check_org(self._org_name)
-        msg_type, repo_list, teams_list = self.gh_link.get_org_info()
+        # Getting data from GitHub about selected organization
+        org_id, org_missing = self._check_org(self._org_name)
+        self._added_check('Organization', self._org_name, org_missing)
+
+        msg_type, msg = self.gh_link.get_org_info()
+
+        col = 'name'
 
         if msg_type == 'ok':
-            clean_repo_list = json.loads(repo_list)
-            col = 'name'
-            for table in clean_repo_list:
-                print(f'Repository name: {table[col]}')
-                not_in, table_len = self.db.db_table_check('repositories', col, table[col])
-                repo_id = self._check_repo(table[col], org_id)
+            repo_list, teams_list = msg
 
-                if not_in:
-                    print(f'Repository is not in db.'
-                          f'\n[ {table[col]} ] added'
-                          f'\n- Table ID: {repo_id}'
-                          f'\n- Organization ID: {org_id}\n')
-                else:
-                    print(f'Repository [ {table[col]} ] is in db.\n')
+            clean_repo_list = json.loads(repo_list)
+            for repo in clean_repo_list:
+                repo_name = repo[col]
+                not_in = self._check_repo(repo_name, org_id)
+
+                self._added_check('Repository', repo_name, not_in)
+
+            clean_team_list = json.loads(teams_list)
+            for team in clean_team_list:
+                team_name = team[col]
+                team_id, not_in = self._check_team(team_name, org_id)
+
+                self._added_check('Team', team_name, not_in)
+
+                for item, value in self._check_team_repos(team_name).items():
+                    self._added_check('Team repository', item, value)
+
+                self._check_team_members(team_name)
+
+            print(f'## Organization {self._org_name} loaded. ##')
         else:
-            print(f'An error has occurred: {repo_list}')
+            print(f'An error has occurred: {msg}')
 
     def _check_org(self, org_name):
+        # Checks if repository is in database, if not present, it is added
+        # Returns bool value and ID
         col = 'name'
         table_name = 'organizations'
-        not_in, table_len = self.db.db_table_check(table_name, col, org_name)
+        not_in, table_len = self.db.db_table_check(table_name, [col], [org_name])
 
         if not_in:
             data = [org_name, 0]
             self.db.add_to_table(table_name, data)
 
-            return table_len
+            return table_len, not_in
 
         else:
             org_id = self.db.get_value(table_name, 'name', org_name, 'ID')
 
-            return org_id
+            return org_id, not_in
 
     def _check_repo(self, repo_name, org_id):
+        # Checks if repository is in database, if not present, it is added and returns bool value
         col = 'name'
         table_name = 'repositories'
-        not_in, table_len = self.db.db_table_check(table_name, col, repo_name)
+        not_in, table_len = self.db.db_table_check(table_name, [col], [repo_name])
 
         if not_in:
             data = [repo_name, org_id]
             self.db.add_to_table(table_name, data)
 
-            return table_len
+        return not_in
 
+    def _check_team(self, team_name, org_id):
+        col = 'name'
+        table_name = 'teams'
+        not_in, table_len = self.db.db_table_check(table_name, [col], [team_name])
+
+        if not_in:
+            data = [team_name, org_id]
+            self.db.add_to_table(table_name, data)
+
+            return table_len, not_in
         else:
-            repo_id = self.db.get_value(table_name, 'name', repo_name, 'ID')
+            team_id = self.db.get_value('teams', col, team_name, 'ID')
+            return team_id, not_in
 
-            return repo_id
+    def _check_team_repos(self, team_name):
+        resp_type, resp = self.gh_link.list_team_repos(team_name)
+        team_id = self.db.get_value('teams', 'name', team_name, 'ID')
+        table_name = 'teamRepos'
+
+        team_repos_states = dict()
+
+        if resp_type == 'ok':
+            resp_code, team_repo_list = resp
+            clean_team_repo_list = json.loads(team_repo_list)
+
+            for repo in clean_team_repo_list:
+                repo_name = repo['name']
+                repo_id = self.db.get_value('repositories', 'name', repo_name, 'ID')
+                role = self.gh_link.check_team_repo_permission(team_name, repo_name)[1][1]
+
+                cols = ['name', 'repo_id', 'team_id']
+                row_data = [repo_name,
+                            repo_id,
+                            team_id,
+                            role]
+
+                not_in, table_len = self.db.db_table_check(table_name, cols, row_data[:-1])
+
+                if not_in:
+                    self.db.add_to_table(table_name, row_data)
+
+                team_repos_states[team_name] = not_in
+
+        return team_repos_states
+
+    def _check_team_members(self, team_name):
+        msg_type, (msg_code, user_list) = self.gh_link.list_team_members(team_name)
+
+        clean_user_list = json.loads(user_list)
+
+        for user in clean_user_list:
+            # TODO : here continue
+            print(user['login'])
 
     def _set_active_org(self):
         # TODO : create function for setting active org
         pass
 
-    def _check_teams(self, org_name):
-        # TODO : not done
-        col = 'name'
-        table_name = 'teams'
-        not_in, table_len = self.db.db_table_check(table_name, col, org_name)
-
-        if not_in:
-            data = [org_name, 0]
-            self.db.add_to_table(table_name, data)
-
-            return table_len
-
-        else:
-            org_id = self.db.get_value(table_name, 'name', org_name, 'ID')
-
-            return org_id
-
     def test_run(self):
-        print(self.gh_link.check_team_repo_permission('test-team', 'renamed-repo'))
-
         print()
         for table in self.db.get_all_tables():
             print(self.db.get_table(table[0]))
@@ -116,6 +163,13 @@ class CLI:
             print('\n')
             
         '''
+
+    def _added_check(self, unit, name, check_bool):
+        if self._print_details:
+            if check_bool:
+                print(f'{name} was added to the database as {unit}.\n')
+            else:
+                print(f'{unit} "{name}" is in db.\n')
 
 
 if __name__ == "__main__":
