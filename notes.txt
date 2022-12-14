@@ -81,6 +81,16 @@ read_only bool
 
 Todo:
 1. SSH stuff, what, how, where, when, why
+generate ssh keys
+get repo ssh keys per repo and their access
+save to db
+change ssh key link
+
+
+
+
+
+
 3. merge
 4. new branch - command structure
 5. can we rename organization? need more data
