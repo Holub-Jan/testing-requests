@@ -53,6 +53,7 @@ class GitHubLink:
             print('Organization not specified!')
 
     def get_org_info(self):
+        # Gathers information about an organization
         error_check = False
         error_messages = list()
 

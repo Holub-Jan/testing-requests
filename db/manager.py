@@ -30,9 +30,11 @@ class DBManager:
         return self.db.getAllTableNames()
 
     def desc_table(self, table_name):
+        # Returns table headers and their data types
         return self.db.describeTable(table_name)
 
     def db_table_check(self, table_name, cols, values):
+        # Checks if specific cols of a table have specific values
         table_names, table_data = self.get_table(table_name)
         not_in = True
 

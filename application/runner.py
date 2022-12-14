@@ -27,7 +27,7 @@ class CLI:
         self._db_pass = pass_line.split(' ')[1]
 
     def _load_org_info(self):
-        # Getting data from GitHub about selected organization
+        # Checking data from GitHub about selected organization
         org_id, org_missing = self._check_org(self._org_name)
         self._added_check('Organization', self._org_name, org_missing)
 
