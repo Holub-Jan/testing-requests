@@ -15,7 +15,7 @@ class CLI:
         self.db = DBManager(self._db_pass)
         self.gh_link = GitHubLink(self._org_name, self._gh_token)
 
-        self._load_org_info()
+        #self._load_org_info()
 
     def _load_secrets(self):
         f = open("../secrets.txt", "r")
@@ -163,7 +163,7 @@ class CLI:
         self.db.delete_table_row('users', 1, False)
         self.db.update_ids('users')
         """
-
+        print(self.gh_link.list_repo_keys('test-repository'))
         print()
         for table in self.db.get_all_tables():
             print(self.db.get_table(table[0]))

@@ -89,12 +89,7 @@ class GitHubLink:
         # Checks specific repo teams permission
         self.headers['Accept'] = 'application/vnd.github.v3.repository+json'
         # TODO : might be issue
-        repo_data = json.loads(self.list_repos()[1][1])
-        owner = False
-
-        for repo in repo_data:
-            if repo['name'] == repo_name:
-                owner = repo['owner']['login']
+        owner = self._get_repo_owner(repo_name)
 
         url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/repos/{owner}/{repo_name}'
         response = requests.get(url, headers=self.headers)
@@ -133,6 +128,36 @@ class GitHubLink:
 
         return self._eval_response(response)
 
+    def list_repo_keys(self, repo_name):
+        # TODO : might be an issue
+        owner = self._get_repo_owner(repo_name)
+
+        url = f'{self.url}repos/{owner}/{repo_name}/keys'
+        response = requests.get(url, headers=self.headers)
+
+        return self._eval_response(response)
+
+    def create_repo_key(self, repo_name, key_name, public_key, read_only=True):
+        # TODO : might be an issue
+        owner = self._get_repo_owner(repo_name)
+        data = {'title': key_name,
+                'key': public_key,
+                'read_only': read_only}
+
+        url = f'{self.url}repos/{owner}/{repo_name}/keys'
+        response = requests.post(url, headers=self.headers, json=data)
+
+        return self._eval_response(response)
+
+    def _get_repo_owner(self, repo_name):
+        repo_data = json.loads(self.list_repos()[1][1])
+        owner = False
+
+        for repo in repo_data:
+            if repo['name'] == repo_name:
+                owner = repo['owner']['login']
+
+        return owner
     @staticmethod
     def _eval_response(resp):
         # TODO : check resp.text to json
