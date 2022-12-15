@@ -7,6 +7,7 @@ from cryptography.hazmat.backends import default_backend as crypto_default_backe
 
 class SSHManager:
     def __init__(self):
+        # save to db only
         self._default_file_location = '\\'.join(os.path.realpath('').split('\\')[:3]) + '\\.ssh'
         self._file_location = self._default_file_location
 

@@ -81,10 +81,9 @@ read_only bool
 
 Todo:
 1. SSH stuff, what, how, where, when, why
-generate ssh keys
-get repo ssh keys per repo and their access
-save to db
-change ssh key link
+
+
+!!!!! key table changed, need new db !!!!!
 
 
 

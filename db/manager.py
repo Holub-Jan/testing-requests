@@ -110,9 +110,12 @@ class DBManager:
         self.new_table(table_name, table_columns)
 
     def _gen_key_table(self):
+        # TODO : add private key
         table_name = 'keys'
         table_columns = [
             ['name', 'TEXT'],
-            ['repo_id', 'INT']
+            ['repo_id', 'INT'],
+            ['key', 'TEXT'],
+            ['read_only', 'INT'],
         ]
         self.new_table(table_name, table_columns)

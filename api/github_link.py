@@ -158,6 +158,7 @@ class GitHubLink:
                 owner = repo['owner']['login']
 
         return owner
+
     @staticmethod
     def _eval_response(resp):
         # TODO : check resp.text to json

@@ -15,7 +15,7 @@ class CLI:
         self.db = DBManager(self._db_pass)
         self.gh_link = GitHubLink(self._org_name, self._gh_token)
 
-        #self._load_org_info()
+        self._load_org_info()
 
     def _load_secrets(self):
         f = open("../secrets.txt", "r")
