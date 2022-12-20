@@ -1,9 +1,12 @@
-from storage import SQLiteClient, OrganizationStorage
+from container.generic_container import GenericContainer
+from storage import SQLiteClient
 from storage.models import Organization
+from storage.organization_storage import OrganizationStorage
 
 
-class OrganizationRepository:
+class OrganizationContainer(GenericContainer):
     def __init__(self, client: SQLiteClient):
+        super().__init__(client)
         self.storage = OrganizationStorage(client)
 
     def get_or_create(self, name: str):
