@@ -1,42 +1,35 @@
 from pydantic import BaseModel
 
 
-class TestTable(BaseModel):
+class TableModel(BaseModel):
     name: str
-    num: int
 
 
-class Organization(BaseModel):
-    name: str
+class Organization(TableModel):
     active: int
 
 
-class Repository(BaseModel):
-    name: str
+class Repository(TableModel):
     org_id: int
 
 
-class Team(BaseModel):
-    name: str
+class Team(TableModel):
     org_id: int
 
 
-class TeamRepository(BaseModel):
-    name: str
+class TeamRepository(TableModel):
     team_id: int
     repo_id: int
     role: str
 
 
-class User(BaseModel):
-    name: str
+class User(TableModel):
     team_id: int
 
 
-class Key(BaseModel):
-    name: str
+class Key(TableModel):
     repo_id: int
-    private_key: int
-    public_key: int
+    private_key: str
+    public_key: str
     read_only: int
 

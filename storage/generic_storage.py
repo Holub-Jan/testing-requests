@@ -1,6 +1,7 @@
 import uuid
-from typing import Type
+from typing import Type, List, Tuple
 
+from storage.models import TableModel
 from storage.sqlite_client import SQLiteClient
 
 
@@ -12,6 +13,8 @@ def _generate_id() -> str:
 class GenericStorage:
 
     def __init__(self, table_name: str, cls_type: Type, client: SQLiteClient):
+        if not issubclass(cls_type, TableModel):
+            raise RuntimeError('Class type is not table model sub class.')
         self._table_name = table_name
         self.client = client
         self.db = self.client.client()
@@ -55,7 +58,7 @@ class GenericStorage:
 
         return self.cls_type(**d)  # *d = (test_name, 123) , **d = (name=test_name, num=123)
 
-    def select_by_data(self, cols: list, data: list):
+    def select_by_data(self, query: List[Tuple]):
         # Returns object inputted data matches a row in selected columns, else return None
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         results = []
@@ -73,8 +76,22 @@ class GenericStorage:
             self.db.deleteDataInTable(tableName=self._table_name, iDValue=id_, updateId=update_id)
             return True  # Do I need this?
 
-        return None
+        return False
 
     def update_ids(self):
         # Update ids in the table
         self.db.updateIDs(self._table_name, commit=True)
+
+    def select_by_name(self, name: str):
+        # Returns org row if it matches the input name, else None
+        table_cols, table_data = self.db.getDataFromTable(self._table_name)
+        name_idx = table_cols.index('name')
+        for row in table_data:
+            if row[name_idx] == name:
+                return self._row_to_class_instance(table_cols, row)
+
+        return None
+
+    def update_row(self):
+        # TODO : todo
+        pass
