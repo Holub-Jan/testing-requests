@@ -75,25 +75,13 @@ keys as k?
 key_id PK int
 repo_id int FK >- re.repo_id
 name UNIQUE string
-key UNIQUE string
+private_key UNIQUE string
+public_key UNIQUE string
 read_only bool
 
 
 Todo:
-1. SSH stuff, what, how, where, when, why
-
-
-!!!!! key table changed, need new db !!!!!
-
-
-
-
-
-
-3. merge
-4. new branch - command structure
-5. can we rename organization? need more data
-6. CLI library
+1. good question
 
 Stuff:
 - what about removing stuff from db if its missing from github and not db

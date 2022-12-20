@@ -1,4 +1,5 @@
 from api.github_link import GitHubLink
+from application.ssh_manager import SSHManager
 from db.manager import DBManager
 import json
 
@@ -12,8 +13,9 @@ class CLI:
 
         self._load_secrets()
 
-        self.db = DBManager(self._db_pass)
-        self.gh_link = GitHubLink(self._org_name, self._gh_token)
+        self._db = DBManager(self._db_pass)
+        self._gh_link = GitHubLink(self._org_name, self._gh_token)
+        self._ssh = SSHManager()
 
         self._load_org_info()
 
@@ -31,7 +33,7 @@ class CLI:
         org_id, org_missing = self._check_org(self._org_name)
         self._added_check('Organization', self._org_name, org_missing)
 
-        msg_type, msg = self.gh_link.get_org_info()
+        msg_type, msg = self._gh_link.get_org_info()
 
         col = 'name'
 
@@ -67,16 +69,16 @@ class CLI:
         # Returns bool value and ID
         col = 'name'
         table_name = 'organizations'
-        not_in, table_len = self.db.db_table_check(table_name, [col], [org_name])
+        not_in, table_len = self._db.db_table_check(table_name, [col], [org_name])
 
         if not_in:
             data = [org_name, 0]
-            self.db.add_to_table(table_name, data)
+            self._db.add_to_table(table_name, data)
 
             return table_len, not_in
 
         else:
-            org_id = self.db.get_value(table_name, 'name', org_name, 'ID')
+            org_id = self._db.get_value(table_name, 'name', org_name, 'ID')
 
             return org_id, not_in
 
@@ -84,31 +86,31 @@ class CLI:
         # Checks if repository is in database, if not present, it is added and returns bool value
         col = 'name'
         table_name = 'repositories'
-        not_in, table_len = self.db.db_table_check(table_name, [col], [repo_name])
+        not_in, table_len = self._db.db_table_check(table_name, [col], [repo_name])
 
         if not_in:
             data = [repo_name, org_id]
-            self.db.add_to_table(table_name, data)
+            self._db.add_to_table(table_name, data)
 
         return not_in
 
     def _check_team(self, team_name, org_id):
         col = 'name'
         table_name = 'teams'
-        not_in, table_len = self.db.db_table_check(table_name, [col], [team_name])
+        not_in, table_len = self._db.db_table_check(table_name, [col], [team_name])
 
         if not_in:
             data = [team_name, org_id]
-            self.db.add_to_table(table_name, data)
+            self._db.add_to_table(table_name, data)
 
             return table_len, not_in
         else:
-            team_id = self.db.get_value('teams', col, team_name, 'ID')
+            team_id = self._db.get_value('teams', col, team_name, 'ID')
             return team_id, not_in
 
     def _check_team_repos(self, team_name):
-        resp_type, resp = self.gh_link.list_team_repos(team_name)
-        team_id = self.db.get_value('teams', 'name', team_name, 'ID')
+        resp_type, resp = self._gh_link.list_team_repos(team_name)
+        team_id = self._db.get_value('teams', 'name', team_name, 'ID')
         table_name = 'teamRepos'
 
         team_repos_states = dict()
@@ -119,8 +121,8 @@ class CLI:
 
             for repo in clean_team_repo_list:
                 repo_name = repo['name']
-                repo_id = self.db.get_value('repositories', 'name', repo_name, 'ID')
-                role = self.gh_link.check_team_repo_permission(team_name, repo_name)[1][1]
+                repo_id = self._db.get_value('repositories', 'name', repo_name, 'ID')
+                role = self._gh_link.check_team_repo_permission(team_name, repo_name)[1][1]
 
                 cols = ['name', 'repo_id', 'team_id']
                 row_data = [repo_name,
@@ -128,26 +130,26 @@ class CLI:
                             team_id,
                             role]
 
-                not_in, table_len = self.db.db_table_check(table_name, cols, row_data[:-1])
+                not_in, table_len = self._db.db_table_check(table_name, cols, row_data[:-1])
 
                 if not_in:
-                    self.db.add_to_table(table_name, row_data)
+                    self._db.add_to_table(table_name, row_data)
 
                 team_repos_states[team_name] = not_in
 
         return team_repos_states
 
     def _check_team_members(self, team_name, team_id):
-        msg_type, (msg_code, user_list) = self.gh_link.list_team_members(team_name)
+        msg_type, (msg_code, user_list) = self._gh_link.list_team_members(team_name)
         user_states = dict()
         clean_user_list = json.loads(user_list)
 
         for user in clean_user_list:
             data = [user['login'], team_id]
-            not_in, table_len = self.db.db_table_check('users', ['name', 'team_id'], data)
+            not_in, table_len = self._db.db_table_check('users', ['name', 'team_id'], data)
 
             if not_in:
-                self.db.add_to_table('users', data)
+                self._db.add_to_table('users', data)
 
             user_states[user['login']] = not_in
 
@@ -157,16 +159,21 @@ class CLI:
         # TODO : create function for setting active org
         self._org_name = new_org
 
+    def gen_ssh_key(self, key_name, repo_id=None, read_only=0):
+        private_key, public_key = self._ssh.gen_ssh_key()
+
+        data = [key_name, repo_id, private_key, public_key, read_only]
+
     def test_run(self):
         """ In case of deleting table rows
         self.db.delete_table_row('users', 0, False)
         self.db.delete_table_row('users', 1, False)
         self.db.update_ids('users')
         """
-        print(self.gh_link.list_repo_keys('test-repository'))
+        print(self._gh_link.list_repo_keys('test-repository'))
         print()
-        for table in self.db.get_all_tables():
-            print(self.db.get_table(table[0]))
+        for table in self._db.get_all_tables():
+            print(self._db.get_table(table[0]))
         # self.gh_link.check_status()
 
         ''' displays all tables and types
