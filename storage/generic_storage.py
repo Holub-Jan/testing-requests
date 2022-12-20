@@ -58,14 +58,11 @@ class GenericStorage:
     def select_by_data(self, cols: list, data: list):
         # Returns object inputted data matches a row in selected columns, else return None
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
+        results = []
         for row in table_data:
-            result = []
-            for col in cols:
-                result.append(row[table_cols.index(col)])
-            if result == data:
-                return self._row_to_class_instance(table_cols, row)
-
-        return None
+            if all([row[table_cols.index(q[0])] == q[1] for q in query]):
+                results.append(self._row_to_class_instance(table_cols, row))
+        return results
 
     def delete_by_id(self, id_: int, update_id: bool = True):
         # Delete row by id if it exists
