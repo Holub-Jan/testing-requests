@@ -11,8 +11,9 @@ class RepositoryContainer(GenericContainer):
 
     def get_or_create(self, name: str, org_id: int):
         # Returning repo row, if it doesn't exist, it also creates it
-        org = self.storage.select_by_data([('name', name), ('org_id', org_id)])
-        if not org:
-            new_org = Repository(name=name, org_id=org_id)
-            self.storage.create(new_org)
-        return self.storage.select_by_name(name)
+        query = [('name', name), ('org_id', org_id)]
+        repo = self.storage.select_by_data(query)
+        if not repo:
+            new_repo = Repository(name=name, org_id=org_id)
+            self.storage.create(new_repo)
+        return self.storage.select_by_data(query)

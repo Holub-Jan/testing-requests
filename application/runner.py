@@ -1,7 +1,15 @@
 from api.github_link import GitHubLink
 from application.ssh_manager import SSHManager
+from container.key_container import KeyContainer
+from container.org_container import OrganizationContainer
+from container.repo_container import RepositoryContainer
+from container.team_container import TeamContainer
+from container.team_repo_container import TeamRepositoryContainer
+from container.user_container import UserContainer
 from db.manager import DBManager
 import json
+
+from storage import SQLiteClient
 
 
 class CLI:
@@ -13,11 +21,19 @@ class CLI:
 
         self._load_secrets()
 
-        self._db = DBManager(self._db_pass)
+        # self._db = DBManager(self._db_pass)
+        self._client = SQLiteClient(file_path="mydb.db", password=self._db_pass)
         self._gh_link = GitHubLink(self._org_name, self._gh_token)
         self._ssh = SSHManager()
 
-        self._load_org_info()
+        self.org_table = OrganizationContainer(self._client)
+        self.repo_table = RepositoryContainer(self._client)
+        self.team_table = TeamContainer(self._client)
+        self.team_repo_table = TeamRepositoryContainer(self._client)
+        self.user_table = UserContainer(self._client)
+        self.key_table = KeyContainer(self._client)
+
+        #self._load_org_info()
 
     def _load_secrets(self):
         f = open("../secrets.txt", "r")
@@ -27,6 +43,10 @@ class CLI:
 
         self._gh_token = token_line.split(' ')[1][:-1]
         self._db_pass = pass_line.split(' ')[1]
+
+    def load_org(self):
+        org = self.org_table.get_or_create(self._org_name)
+        print(org)
 
     def _load_org_info(self):
         # Checking data from GitHub about selected organization
@@ -164,27 +184,6 @@ class CLI:
 
         data = [key_name, repo_id, private_key, public_key, read_only]
 
-    def test_run(self):
-        """ In case of deleting table rows
-        self.db.delete_table_row('users', 0, False)
-        self.db.delete_table_row('users', 1, False)
-        self.db.update_ids('users')
-        """
-        print(self._gh_link.list_repo_keys('test-repository'))
-        print()
-        for table in self._db.get_all_tables():
-            print(self._db.get_table(table[0]))
-        # self.gh_link.check_status()
-
-        ''' displays all tables and types
-        for table in self.db.get_all_tables():
-            print(table[0])
-            for each in self.db.desc_table(table[0]):
-                print(each)
-            print('\n')
-            
-        '''
-
     def _added_check(self, unit, name, check_bool):
         if self._print_details:
             if check_bool:
@@ -192,8 +191,3 @@ class CLI:
             else:
                 print(f'{unit} "{name}" is in db.\n')
 
-
-if __name__ == "__main__":
-    x = CLI()
-
-    x.test_run()

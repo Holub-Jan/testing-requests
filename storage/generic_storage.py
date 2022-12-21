@@ -64,7 +64,9 @@ class GenericStorage:
         results = []
         for row in table_data:
             if all([row[table_cols.index(q[0])] == q[1] for q in query]):
-                results.append(self._row_to_class_instance(table_cols, row))
+                row_object = self._row_to_class_instance(table_cols, row)
+                row_id = row[table_cols.index('ID')]
+                results.append((row_id, row_object))
         return results
 
     def delete_by_id(self, id_: int, update_id: bool = True):
@@ -72,7 +74,6 @@ class GenericStorage:
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         ids = [row[table_cols.index['ID']] for row in table_data]
         if id_ in ids:
-            # ??? can I remove the tableName and iDValue? updateId makes sense cuz iam missing couple of data in between
             self.db.deleteDataInTable(tableName=self._table_name, iDValue=id_, updateId=update_id)
             return True  # Do I need this?
 
@@ -88,10 +89,22 @@ class GenericStorage:
         name_idx = table_cols.index('name')
         for row in table_data:
             if row[name_idx] == name:
-                return self._row_to_class_instance(table_cols, row)
+                row_object = self._row_to_class_instance(table_cols, row)
+                row_id = row[table_cols.index('ID')]
+                return row_id, row_object
 
         return None
 
-    def update_row(self):
+    def update_row(self, id_: int, col_name: str, col_value: str):
+        # Update row by id if it exists
+        table_cols, table_data = self.db.getDataFromTable(self._table_name)
+        ids = [row[table_cols.index['ID']] for row in table_data]
+        if id_ in ids:
+            self.db.updateInTable(tableName=self._table_name, iDValue=id_, colName=col_name, colValue=col_value)
+            return True  # Do I need this?
+
+        return False
+
+    def get_id(self):
         # TODO : todo
         pass
