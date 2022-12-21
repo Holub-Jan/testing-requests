@@ -24,7 +24,7 @@ class SQLiteClient:
         if not exists:
             columns = []
             if hasattr(type_, '__fields__'):
-                for f in type_.__fields__:
+                for f in [tf for tf in type_.__fields__ if tf != "id_"]:
                     t = type_.__fields__[f].type_
                     columns.append([f, self.inner_types[t]])
                 self._db.createTable(table_name, columns)

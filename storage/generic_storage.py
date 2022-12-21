@@ -52,7 +52,7 @@ class GenericStorage:
         # Returns an object with row data
         row_col = [c for c in row_col if c != "ID"]
 
-        d = {}
+        d = {'id_': row_data[0]}
         for i in range(len(row_col)):
             d[row_col[i]] = row_data[i + 1]
 
@@ -65,8 +65,7 @@ class GenericStorage:
         for row in table_data:
             if all([row[table_cols.index(q[0])] == q[1] for q in query]):
                 row_object = self._row_to_class_instance(table_cols, row)
-                row_id = row[table_cols.index('ID')]
-                results.append((row_id, row_object))
+                results.append(row_object)
         return results
 
     def delete_by_id(self, id_: int, update_id: bool = True):
@@ -90,8 +89,7 @@ class GenericStorage:
         for row in table_data:
             if row[name_idx] == name:
                 row_object = self._row_to_class_instance(table_cols, row)
-                row_id = row[table_cols.index('ID')]
-                return row_id, row_object
+                return row_object
 
         return None
 

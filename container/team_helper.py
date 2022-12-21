@@ -4,6 +4,12 @@ from storage.models import Team
 from storage.team_storage import TeamStorage
 
 
+class TTeam:
+    name: str
+    repositories: []
+    users: []
+
+
 class TeamContainer(GenericContainer):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)

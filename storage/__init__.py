@@ -10,6 +10,6 @@ if __name__ == "__main__":
         new_org = Organization(name="standa-novak", active=0)
         org_stg.create(new_org)
     org = org_stg.select_by_name("standa-novak")
-    query = [('name', 'standa-novak'), ('active', 0)]
+    query = [('name', 'standa-novak'), ('active', 0), ('ID', 1)]
     result = org_stg.select_by_data(query)
     print(result)
