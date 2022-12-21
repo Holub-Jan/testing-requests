@@ -1,10 +1,10 @@
-from container.generic_container import GenericContainer
+from container.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import Repository
 from storage.repository_storage import RepositoryStorage
 
 
-class RepositoryContainer(GenericContainer):
+class RepositoryHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
         self.storage = RepositoryStorage(client)

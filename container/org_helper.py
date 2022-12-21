@@ -1,10 +1,10 @@
-from container.generic_container import GenericContainer
+from container.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import Organization
 from storage.organization_storage import OrganizationStorage
 
 
-class OrganizationContainer(GenericContainer):
+class OrganizationHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
         self.storage = OrganizationStorage(client)

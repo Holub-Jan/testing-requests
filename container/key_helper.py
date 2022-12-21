@@ -1,10 +1,10 @@
-from container.generic_container import GenericContainer
+from container.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.key_storage import KeyStorage
 from storage.models import Key
 
 
-class KeyContainer(GenericContainer):
+class KeyHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
         self.storage = KeyStorage(client)

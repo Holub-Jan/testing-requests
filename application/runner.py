@@ -1,11 +1,11 @@
 from api.github_link import GitHubLink
 from application.ssh_manager import SSHManager
-from container.key_container import KeyContainer
-from container.org_container import OrganizationContainer
-from container.repo_container import RepositoryContainer
-from container.team_container import TeamContainer
-from container.team_repo_container import TeamRepositoryContainer
-from container.user_container import UserContainer
+from container.key_helper import KeyHelper
+from container.org_helper import OrganizationHelper
+from container.repo_helper import RepositoryHelper
+from container.team_helper import TeamHelper
+from container.team_repo_helper import TeamRepositoryHelper
+from container.user_helper import UserHelper
 from db.manager import DBManager
 import json
 
@@ -26,12 +26,12 @@ class CLI:
         self._gh_link = GitHubLink(self._org_name, self._gh_token)
         self._ssh = SSHManager()
 
-        self.org_table = OrganizationContainer(self._client)
-        self.repo_table = RepositoryContainer(self._client)
-        self.team_table = TeamContainer(self._client)
-        self.team_repo_table = TeamRepositoryContainer(self._client)
-        self.user_table = UserContainer(self._client)
-        self.key_table = KeyContainer(self._client)
+        self.org_table = OrganizationHelper(self._client)
+        self.repo_table = RepositoryHelper(self._client)
+        self.team_table = TeamHelper(self._client)
+        self.team_repo_table = TeamRepositoryHelper(self._client)
+        self.user_table = UserHelper(self._client)
+        self.key_table = KeyHelper(self._client)
 
         #self._load_org_info()
 
@@ -45,8 +45,11 @@ class CLI:
         self._db_pass = pass_line.split(' ')[1]
 
     def load_org(self):
-        org = self.org_table.get_or_create(self._org_name)
-        print(org)
+        # Loading organization information, creates it if it doesn't exist
+        org_id, org_object = self.org_table.get_or_create(self._org_name)
+
+        # Get information about organization from GitHub
+        msg_type, msg = self._gh_link.get_org_info()
 
     def _load_org_info(self):
         # Checking data from GitHub about selected organization

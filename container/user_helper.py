@@ -1,10 +1,14 @@
-from container.generic_container import GenericContainer
+from container.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import User
 from storage.user_storage import UserStorage
 
+class UUser:
+    name: str
+    team: Team
 
-class UserContainer(GenericContainer):
+
+class UserHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
         self.storage = UserStorage(client)
