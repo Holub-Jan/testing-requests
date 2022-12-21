@@ -104,7 +104,3 @@ class GenericStorage:
             return True  # Do I need this?
 
         return False
-
-    def get_id(self):
-        # TODO : todo
-        pass
