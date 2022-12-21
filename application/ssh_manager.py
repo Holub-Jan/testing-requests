@@ -7,20 +7,13 @@ from cryptography.hazmat.backends import default_backend as crypto_default_backe
 
 class SSHManager:
     def __init__(self):
-        # save to db only
-        self._default_file_location = '\\'.join(os.path.realpath('').split('\\')[:3]) + '\\.ssh'
-        self._file_location = self._default_file_location
+        # do I need this?
+        pass
 
-    def gen_ssh_key(self, key_name):
+    def gen_ssh_key(self):
         private_key, public_key = self._gen_new_keys()
 
-        self._save_new_keys(key_name, private_key, public_key)
-
-    def change_file_location(self, file_location):
-        self._file_location = file_location
-
-    def location_to_default(self):
-        self._file_location = self._default_file_location
+        return private_key, public_key
 
     def _gen_new_keys(self):
         # TODO : add additional options for encoding?
@@ -42,18 +35,3 @@ class SSHManager:
         )
 
         return private_key.decode(), public_key.decode()
-
-    def _save_new_keys(self, key_name, private_key, public_key):
-        # TODO : checking if key_name already exists? or elsewhere
-        with open(f'{self._file_location}\\{key_name}', 'w', encoding='utf-8') as f:
-            f.write(private_key)
-
-        with open(f'{self._file_location}\\{key_name}.pub', 'w', encoding='utf-8') as f:
-            f.write(public_key)
-
-    def run(self):
-        self.gen_ssh_key('test_key_name')
-
-
-ssh = SSHManager()
-ssh.run()

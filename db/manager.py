@@ -12,29 +12,39 @@ class DBManager:
         # self._gen_empty_db()
 
     def new_table(self, table_name, table_data):
+        # Done - create table if not exists
         self.db.createTable(table_name, table_data, makeSecure=True, commit=True)
 
     def get_table(self, table_name):
+        # done - select_all
         return self.db.getDataFromTable(table_name, raiseConversionError=True, omitID=False)
 
     def add_to_table(self, table_name, table_data):
+        # Done - create(generic storage)
         self.db.insertIntoTable(table_name, table_data, commit=True)
 
     def delete_table_row(self, table_name, row, update_id):
+        # done - delete by id
         self.db.deleteDataInTable(table_name, row, commit=True, raiseError=True, updateId=update_id)
 
     def update_ids(self, table_name):
+        # done - update ids
         self.db.updateIDs(table_name, commit=True)
 
     def get_all_tables(self):
+        # TODO : do i need this?
+        # No usage currently
         return self.db.getAllTableNames()
 
     def desc_table(self, table_name):
+        # TODO : do i need this?
+        # No usage currently
         # Returns table headers and their data types
         return self.db.describeTable(table_name)
 
     def db_table_check(self, table_name, cols, values):
         # Checks if specific cols of a table have specific values
+        # done - select by data
         table_names, table_data = self.get_table(table_name)
         not_in = True
 
@@ -50,6 +60,7 @@ class DBManager:
 
     def get_value(self, table_name, in_col, value, out_col):
         # Check if value is present in specific table
+        # done - select by data
         table_names, table_data = self.get_table(table_name)
         not_in = True
 
@@ -60,6 +71,7 @@ class DBManager:
         return not_in
 
     def _gen_empty_db(self):
+        # done via objects
         self._gen_org_table()
         self._gen_repo_table()
         self._gen_team_table()
@@ -68,6 +80,7 @@ class DBManager:
         self._gen_user_table()
 
     def _gen_org_table(self):
+        # done via models
         table_name = 'organizations'
         table_columns = [
             ['name', 'TEXT'],
@@ -76,6 +89,7 @@ class DBManager:
         self.new_table(table_name, table_columns)
 
     def _gen_repo_table(self):
+        # done via models
         table_name = 'repositories'
         table_columns = [
             ['name', 'TEXT'],
@@ -84,6 +98,7 @@ class DBManager:
         self.new_table(table_name, table_columns)
 
     def _gen_team_table(self):
+        # done via models
         table_name = 'teams'
         table_columns = [
             ['name', 'TEXT'],
@@ -92,6 +107,7 @@ class DBManager:
         self.new_table(table_name, table_columns)
 
     def _gen_team_repos_table(self):
+        # done via models
         table_name = 'teamRepos'
         table_columns = [
             ['name', 'TEXT'],
@@ -102,6 +118,7 @@ class DBManager:
         self.new_table(table_name, table_columns)
 
     def _gen_user_table(self):
+        # done via models
         table_name = 'users'
         table_columns = [
             ['name', 'TEXT'],
@@ -110,12 +127,13 @@ class DBManager:
         self.new_table(table_name, table_columns)
 
     def _gen_key_table(self):
-        # TODO : add private key
+        # done via models
         table_name = 'keys'
         table_columns = [
             ['name', 'TEXT'],
             ['repo_id', 'INT'],
-            ['key', 'TEXT'],
+            ['private_key', 'TEXT'],
+            ['public_key', 'TEXT'],
             ['read_only', 'INT'],
         ]
         self.new_table(table_name, table_columns)

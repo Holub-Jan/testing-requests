@@ -6,35 +6,36 @@ import requests
 class GitHubLink:
 
     def __init__(self, org_name, token):
+        # TODO : missing check if org exists
         self.org_name = org_name
         self.token = token
 
-        # TODO : remove slash, add it elsewhere
-        self.url = 'https://api.github.com/'
+        self.url = 'https://api.github.com'
         self.headers = {'Accept': 'application/vnd.github+json'}
 
         self._load_token()
 
     def list_repos(self):
-        url = f'{self.url}orgs/{self.org_name}/repos'
+        url = f'/{self.url}orgs/{self.org_name}/repos'
         response = requests.get(url, headers=self.headers)
 
         return self._eval_response(response)
 
     def create_repo(self, data):
-        url = f'{self.url}orgs/{self.org_name}/repos'
+        url = f'/{self.url}orgs/{self.org_name}/repos'
         response = requests.post(url, headers=self.headers, json=data)
 
         return self._eval_response(response)
 
     def rename_repo(self, old_name, new_name):
         data = {'name': new_name}
-        url = f'{self.url}repos/{self.org_name}/{old_name}'
+        url = f'/{self.url}repos/{self.org_name}/{old_name}'
         response = requests.patch(url, headers=self.headers, json=data)
 
         return self._eval_response(response)
 
     def delete_repo(self):
+        # TODO : this ok?
         response = requests.delete(self.url, headers=self.headers)
 
         return response
@@ -53,12 +54,16 @@ class GitHubLink:
             print('Organization not specified!')
 
     def get_org_info(self):
+        # TODO : this shouldn't be here, logic is elsewhere
         # Gathers information about an organization
         error_check = False
         error_messages = list()
 
         repo_list_resp, repo_list = self.list_repos()
         team_list_resp, team_list = self.list_teams()
+        # get team repos
+        # get team users
+        # get repo keys
 
         if repo_list_resp == 'error':
             error_check = True
@@ -74,13 +79,13 @@ class GitHubLink:
         return 'ok', (repo_list[1], team_list[1])
 
     def list_teams(self):
-        url = f'{self.url}orgs/{self.org_name}/teams'
+        url = f'/{self.url}orgs/{self.org_name}/teams'
         response = requests.get(url, headers=self.headers)
 
         return self._eval_response(response)
 
     def get_team_by_name(self, team_name):
-        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}'
+        url = f'/{self.url}orgs/{self.org_name}/teams/{team_name}'
         response = requests.get(url, headers=self.headers)
 
         return self._eval_response(response)
@@ -91,11 +96,11 @@ class GitHubLink:
         # TODO : might be issue
         owner = self._get_repo_owner(repo_name)
 
-        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/repos/{owner}/{repo_name}'
+        url = f'/{self.url}orgs/{self.org_name}/teams/{team_name}/repos/{owner}/{repo_name}'
         response = requests.get(url, headers=self.headers)
 
         msg_type, data = self._eval_response(response)
-        permission_data = json.loads(data[1])
+        permission_data = data[1]
 
         role_name = permission_data['role_name']
 
@@ -117,13 +122,13 @@ class GitHubLink:
         pass
 
     def list_team_repos(self, team_name):
-        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/repos'
+        url = f'/{self.url}orgs/{self.org_name}/teams/{team_name}/repos'
         response = requests.get(url, headers=self.headers)
 
         return self._eval_response(response)
 
     def list_team_members(self, team_name):
-        url = f'{self.url}orgs/{self.org_name}/teams/{team_name}/members'
+        url = f'/{self.url}orgs/{self.org_name}/teams/{team_name}/members'
         response = requests.get(url, headers=self.headers)
 
         return self._eval_response(response)
@@ -132,7 +137,7 @@ class GitHubLink:
         # TODO : might be an issue
         owner = self._get_repo_owner(repo_name)
 
-        url = f'{self.url}repos/{owner}/{repo_name}/keys'
+        url = f'/{self.url}repos/{owner}/{repo_name}/keys'
         response = requests.get(url, headers=self.headers)
 
         return self._eval_response(response)
@@ -144,13 +149,13 @@ class GitHubLink:
                 'key': public_key,
                 'read_only': read_only}
 
-        url = f'{self.url}repos/{owner}/{repo_name}/keys'
+        url = f'/{self.url}repos/{owner}/{repo_name}/keys'
         response = requests.post(url, headers=self.headers, json=data)
 
         return self._eval_response(response)
 
     def _get_repo_owner(self, repo_name):
-        repo_data = json.loads(self.list_repos()[1][1])
+        repo_data = self.list_repos()[1][1]
         owner = False
 
         for repo in repo_data:
@@ -161,8 +166,9 @@ class GitHubLink:
 
     @staticmethod
     def _eval_response(resp):
-        # TODO : check resp.text to json
+        # Returns json if not error
+        # TODO : check if i need this and if it needs to be edited
         if resp.status_code in [400, 404]:
             return 'error', f'Status code: {resp.status_code}\nResponse: {resp.text}'
         else:
-            return 'ok', [resp.status_code, resp.text]
+            return 'ok', [resp.status_code, resp.json]
