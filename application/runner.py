@@ -45,10 +45,26 @@ class CLI:
         self._db_pass = pass_line.split(' ')[1]
 
     def load_org(self):
+        # TODO : create system for checking current organization
+        """
+        1. gh_link check if org exists
+        2. check if in db
+        3. gh_link get org repos
+        4. check if repos in db and not in gh
+        5. gh_link get repo keys
+        6. check if keys in db and not in db
+        7. gh_link get org teams
+        8. check if teams in db and not in gh
+        9. gh_link get team repos
+        10. check if team repos in db and not in gh
+        11. gh_link get team users
+        12. check if team users in db and not in gh
+        """
         # Loading organization information, creates it if it doesn't exist
         org_id, org_object = self.org_table.get_or_create(self._org_name)
 
         # Get information about organization from GitHub
+        # TODO : gh link need re-fragmenting, output unknown
         msg_type, msg = self._gh_link.get_org_info()
 
     def _load_org_info(self):

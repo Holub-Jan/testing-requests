@@ -81,7 +81,7 @@ read_only bool
 
 
 Todo:
-1. good question
+runner.load_org()
 
 Stuff:
 - what about removing stuff from db if its missing from github and not db

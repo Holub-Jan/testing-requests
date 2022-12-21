@@ -12,8 +12,8 @@ class TeamRepositoryHelper(GenericHelper):
     def get_or_create(self, name: str, team_id: int, repo_id: int, role: str):
         # Returning team repository row, if it doesn't exist, it also creates it
         query = [('name', name), ('team_id', team_id), ('repo_id', repo_id)]
-        team_repo = self.storage.select_by_data(query)
+        team_repo = self.storage.select_by_query(query)
         if not team_repo:
             new_team_repo = TeamRepository(name=name, team_id=team_id, repo_id=repo_id, role=role)
             self.storage.create(new_team_repo)
-        return self.storage.select_by_data(query)
+        return self.storage.select_by_query(query)

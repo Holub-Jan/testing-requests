@@ -2,8 +2,8 @@ from pydantic import BaseModel
 
 
 class TableModel(BaseModel):
-    name: str
     id_: int = -1
+    name: str
 
 
 class Organization(TableModel):

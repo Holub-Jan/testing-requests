@@ -6,6 +6,7 @@ import requests
 class GitHubLink:
 
     def __init__(self, org_name, token):
+        # TODO : missing check if org exists
         self.org_name = org_name
         self.token = token
 
@@ -53,6 +54,7 @@ class GitHubLink:
             print('Organization not specified!')
 
     def get_org_info(self):
+        # TODO : this shouldn't be here, logic is elsewhere
         # Gathers information about an organization
         error_check = False
         error_messages = list()

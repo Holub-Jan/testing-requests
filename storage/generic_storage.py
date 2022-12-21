@@ -58,7 +58,7 @@ class GenericStorage:
 
         return self.cls_type(**d)  # *d = (test_name, 123) , **d = (name=test_name, num=123)
 
-    def select_by_data(self, query: List[Tuple]):
+    def select_by_query(self, query: List[Tuple]) -> list:
         # Returns object inputted data matches a row in selected columns, else return None
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         results = []
@@ -82,18 +82,7 @@ class GenericStorage:
         # Update ids in the table
         self.db.updateIDs(self._table_name, commit=True)
 
-    def select_by_name(self, name: str):
-        # Returns org row if it matches the input name, else None
-        table_cols, table_data = self.db.getDataFromTable(self._table_name)
-        name_idx = table_cols.index('name')
-        for row in table_data:
-            if row[name_idx] == name:
-                row_object = self._row_to_class_instance(table_cols, row)
-                return row_object
-
-        return None
-
-    def update_row(self, id_: int, col_name: str, col_value: str):
+    def update_column_by_id(self, id_: int, col_name: str, col_value: str):
         # Update row by id if it exists
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         ids = [row[table_cols.index['ID']] for row in table_data]
