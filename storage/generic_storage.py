@@ -68,7 +68,7 @@ class GenericStorage:
                 results.append(row_object)
         return results
 
-    def delete_by_id(self, id_: int, update_id: bool = True):
+    def delete_by_id(self, id_: int, update_id: bool):
         # Delete row by id if it exists
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         ids = [row[table_cols.index['ID']] for row in table_data]
@@ -80,6 +80,7 @@ class GenericStorage:
 
     def update_ids(self):
         # Update ids in the table
+        # TODO : need to update ids of the object as well
         self.db.updateIDs(self._table_name, commit=True)
 
     def update_column_by_id(self, id_: int, col_name: str, col_value: str):

@@ -1,11 +1,11 @@
 from api.github_link import GitHubLink
 from application.ssh_manager import SSHManager
-from container.key_helper import KeyHelper
-from container.org_helper import OrganizationHelper
-from container.repo_helper import RepositoryHelper
-from container.team_helper import TeamHelper
-from container.team_repo_helper import TeamRepositoryHelper
-from container.user_helper import UserHelper
+from helper.key_helper import KeyHelper
+from helper.org_helper import OrganizationHelper
+from helper.repo_helper import RepositoryHelper
+from helper.team_helper import TeamHelper
+from helper.team_repo_helper import TeamRepositoryHelper
+from helper.user_helper import UserHelper
 from db.manager import DBManager
 import json
 
@@ -51,87 +51,56 @@ class CLI:
         2. check if in db
         3. gh_link get org repos
         4. check if repos in db and not in gh
-        5. gh_link get repo keys
-        6. check if keys in db and not in db
+        5. gh_link get repo keys (per repo)
+        6. check if keys in db and not in db (per repo)
         7. gh_link get org teams
         8. check if teams in db and not in gh
-        9. gh_link get team repos
-        10. check if team repos in db and not in gh
-        11. gh_link get team users
-        12. check if team users in db and not in gh
+        9. gh_link get team repos (per team)
+        10. check if team repos in db and not in gh (per team)
+        11. gh_link get team users (per team)
+        12. check if team users in db and not in gh (per team)
         """
-        # Loading organization information, creates it if it doesn't exist
-        org_id, org_object = self.org_table.get_or_create(self._org_name)
+        # 1.
+        # 2. Loading organization information, creates it if it doesn't exist
+        org = self.org_table.get_or_create(self._org_name)
+        org_id = org.dict()['id_']
+        org_details = self.org_table.get_details(self._org_name, org_id)
+        # 3. gh_link get org repos -> list
+        gh_repo_list = list
+        # 4. check if repos in db and not in gh
+        db_repo_list = org_details.dict()['repositories']
+        self._check_repo(db_repo_list, gh_repo_list, org_id)
+        # 5. gh_link get repo keys
+        ## per repo ##
+        repo_name = ''
+        repo = self.repo_table.get_or_create(repo_name, org_id)
+        repo_id = repo.dict()['id_']
+        repo_details = self.repo_table.get_details(repo_name, repo_id)
+        gh_key_list = list
+        # 6. check if keys in db and not in db
+        db_key_list = org_details.dict()['keys']
+
+        self._repo_check(gh_repo_list, db_repo_list)
+        # 7.
+        # 8.
+        # 9.
+        # 10.
+        # 11.
+        # 12.
 
         # Get information about organization from GitHub
         # TODO : gh link need re-fragmenting, output unknown
         msg_type, msg = self._gh_link.get_org_info()
 
-    def _load_org_info(self):
-        # Checking data from GitHub about selected organization
-        org_id, org_missing = self._check_org(self._org_name)
-        self._added_check('Organization', self._org_name, org_missing)
+    def _check_repo(self, db_repos, gh_repos, org_id):
+        for repo in gh_repos:
+            self.repo_table.get_or_create(repo, org_id)
 
-        msg_type, msg = self._gh_link.get_org_info()
-
-        col = 'name'
-
-        if msg_type == 'ok':
-            repo_list, teams_list = msg
-
-            clean_repo_list = json.loads(repo_list)
-            for repo in clean_repo_list:
-                repo_name = repo[col]
-                not_in = self._check_repo(repo_name, org_id)
-
-                self._added_check('Repository', repo_name, not_in)
-
-            clean_team_list = json.loads(teams_list)
-            for team in clean_team_list:
-                team_name = team[col]
-                team_id, not_in = self._check_team(team_name, org_id)
-
-                self._added_check('Team', team_name, not_in)
-
-                for item, value in self._check_team_repos(team_name).items():
-                    self._added_check('Team repository', item, value)
-
-                for item, value in self._check_team_members(team_name, team_id).items():
-                    self._added_check('Users', item, value)
-
-            print(f'## Organization {self._org_name} loaded. ##')
-        else:
-            print(f'An error has occurred: {msg}')
-
-    def _check_org(self, org_name):
-        # Checks if repository is in database, if not present, it is added
-        # Returns bool value and ID
-        col = 'name'
-        table_name = 'organizations'
-        not_in, table_len = self._db.db_table_check(table_name, [col], [org_name])
-
-        if not_in:
-            data = [org_name, 0]
-            self._db.add_to_table(table_name, data)
-
-            return table_len, not_in
-
-        else:
-            org_id = self._db.get_value(table_name, 'name', org_name, 'ID')
-
-            return org_id, not_in
-
-    def _check_repo(self, repo_name, org_id):
-        # Checks if repository is in database, if not present, it is added and returns bool value
-        col = 'name'
-        table_name = 'repositories'
-        not_in, table_len = self._db.db_table_check(table_name, [col], [repo_name])
-
-        if not_in:
-            data = [repo_name, org_id]
-            self._db.add_to_table(table_name, data)
-
-        return not_in
+        # Removing repos, that are no longer in gh
+        # TODO : also remove keys and mentions in team repos related to this repo
+        for repo in db_repos:
+            if repo not in gh_repos:
+                self.repo_table.remove_from_db(repo.dict()['id_'])
 
     def _check_team(self, team_name, org_id):
         col = 'name'

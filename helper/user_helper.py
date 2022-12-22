@@ -1,4 +1,4 @@
-from container.generic_helper import GenericHelper
+from helper.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import User
 from storage.user_storage import UserStorage

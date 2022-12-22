@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-
-from container.generic_helper import GenericHelper
+from helper.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.key_storage import KeyStorage
 from storage.models import Repository
@@ -33,3 +32,7 @@ class RepositoryHelper(GenericHelper):
         repo = RRepository(name=name, keys=keys)
 
         return repo
+
+    def remove_from_db(self, id_: int, update_id: bool = False):
+        # TODO : update ids?
+        return self._repo_storage.delete_by_id(id_, update_id)

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from container.generic_helper import GenericHelper
+from helper.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import Organization
 from storage.organization_storage import OrganizationStorage
