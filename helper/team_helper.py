@@ -1,10 +1,9 @@
+from typing import List, Tuple
+
 from pydantic import BaseModel
 from helper.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import Team
-from storage.repository_storage import RepositoryStorage
-from storage.team_storage import TeamStorage
-from storage.user_storage import UserStorage
 
 
 class TTeam(BaseModel):
@@ -16,15 +15,12 @@ class TTeam(BaseModel):
 class TeamHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
-        self._team_storage = TeamStorage(client)
-        self._repo_storage = RepositoryStorage(client)
-        self._user_storage = UserStorage(client)
 
     def get_or_create(self, name: str, org_id: int):
         # Returning team row, if it doesn't exist, it also creates it
         query = [('name', name), ('org_id', org_id)]
-        team = self._team_storage.select_by_query(query)
-        if not team:
+        team_exists = self.exists(query)
+        if not team_exists:
             new_team = Team(name=name, org_id=org_id)
             self._team_storage.create(new_team)
         return self._team_storage.select_by_query(query)
@@ -36,3 +32,16 @@ class TeamHelper(GenericHelper):
 
         team = TTeam(name=name, repositories=repos, users=users)
         return team
+
+    def delete_by_ids(self, ids_: List[int]):
+        for id_ in ids_:
+            self._team_storage.delete_by_id(id_, False)
+
+        self._team_storage.update_ids()
+
+    def update(self):
+        # todo create update method
+        pass
+
+    def exists(self, query: List[Tuple]):
+        return self._team_storage.select_by_query(query)

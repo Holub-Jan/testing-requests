@@ -20,7 +20,7 @@ class Team(TableModel):
 
 class TeamRepository(TableModel):
     team_id: int
-    repo_id: int
+    org_id: int
     role: str
 
 

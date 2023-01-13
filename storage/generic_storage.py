@@ -68,7 +68,7 @@ class GenericStorage:
                 results.append(row_object)
         return results
 
-    def delete_by_id(self, id_: int, update_id: bool):
+    def delete_by_id(self, id_: int, update_id: bool = True):
         # Delete row by id if it exists
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         ids = [row[table_cols.index['ID']] for row in table_data]
@@ -80,15 +80,39 @@ class GenericStorage:
 
     def update_ids(self):
         # Update ids in the table
-        # TODO : need to update ids of the object as well
+        # TODO : need to update ids of the object as well !!!!!DO NOT USE!!!!!
         self.db.updateIDs(self._table_name, commit=True)
 
     def update_column_by_id(self, id_: int, col_name: str, col_value: str):
-        # Update row by id if it exists
+        # Update column row by id if it exists
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
         ids = [row[table_cols.index['ID']] for row in table_data]
         if id_ in ids:
             self.db.updateInTable(tableName=self._table_name, iDValue=id_, colName=col_name, colValue=col_value)
-            return True  # Do I need this?
+            return True
 
         return False
+
+    def update_row_by_id(self, data_raw):
+        # Update row by id if it exists
+        data_dict = data_raw.dict()
+        row_id = data_dict['id_']
+        table_cols, table_data = self.db.getDataFromTable(self._table_name)
+        ids = [row[table_cols.index['ID']] for row in table_data]
+
+        if row_id in ids:
+            original_row = self.select_by_id(data_dict['id_']).dict()
+            difference_list = []
+
+            for key, value in original_row.items():
+                if data_dict[key] != value:
+                    difference_list.append((key, data_dict[key]))
+
+            for difference in difference_list:
+                col_name, col_value = difference
+                self.db.updateInTable(tableName=self._table_name, iDValue=row_id, colName=col_name, colValue=col_value)
+
+            return True
+
+        return False
+

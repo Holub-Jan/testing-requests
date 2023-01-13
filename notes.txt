@@ -93,3 +93,68 @@ Teams
 	write
 	maintain
 	admin
+	
+all changes through db
+
+
+
+--login {username} --password (prompt.)
+--logout
+--status
+--repo --list
+--repo --create {repo_name}
+--repo --edit {repo_name} --name {new_repo_name}
+--repo --delete {repo_name}
+--team --list
+--team --create {team_name}
+--team --edit {team_name} --name {new_team_name}
+--team --delete {team_name}
+--team --link {team_name} {repo_name} --role {role}
+--team --unlink {team_name} {repo_name}
+--team --user {team_name} --add {user_name}
+--team --user {team_name} --remove {user_name}
+--ssh --generate
+--ssh --show {ssh_id}
+--ssh --link {ssh_id} --repo {repo_name}
+--reconsile
+
+
+while prompt
+can i do this
+do this or not 
++ exit
+
+
+c_options = {'logout': 1,
+            'status': 2,
+            'repo':
+                {'list': 3,
+                'create': 4,
+                'edit':
+                    {'name': 5},
+                'delete': 6},
+            'team':
+                {'list': 7,
+				'create': 7,
+                'edit':
+					{'name': 8},
+                'delete': 9,
+                'link':
+                    {'role': 10},
+                'unlink': 11,
+                'user':
+                    {'add': 12,
+                    'remove': 13}},
+            'ssh':
+                {'generate': 14,
+                'show': 15,
+                'link':
+                    {'repo': 16}},
+            'reconcile': 17}
+			
+
+todo-
+team lieutenant complete
+list create edit delete
+link unlink user
+you can always start adding comments
