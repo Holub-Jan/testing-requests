@@ -1,42 +1,3 @@
-Objects:
-1. GitHub communicator
-2. team manager
-3. database connector
-4. SSH manager
-5. Reconcile handler
-6. Application (project CLI)
-
-GitHub - functions
-- list repos in org
-- edit repo in org
-- create repo in org
-- delete repo in org
-- get connection status
-- connect to specific org
-
-SSH manager - functions
-- generate new ssh with info
-- save ssh info
-- show ssh by id
-- link ssh with api - low prio
-
-DB manager - functions
-- save data?
-- load data?
-???
-
-Team manager - functions
-- create team
-- edit team
-- delete team
-- link team with role
-- unlink team
-- add user
-- remove user
-
-Reconcile handler (in runner)- functions
-- check everything is fine on GitHub vs db
-
 All data:
 organizations as or
 ------------
@@ -80,24 +41,6 @@ public_key UNIQUE string
 read_only bool
 
 
-Todo:
-runner.load_org()
-
-Stuff:
-- what about removing stuff from db if its missing from github and not db
-
-Teams
-- types:
-	read
-	triage
-	write
-	maintain
-	admin
-	
-all changes through db
-
-
-
 --login {username} --password (prompt.)
 --logout
 --status
@@ -117,13 +60,6 @@ all changes through db
 --ssh --show {ssh_id}
 --ssh --link {ssh_id} --repo {repo_name}
 --reconsile
-
-
-while prompt
-can i do this
-do this or not 
-+ exit
-
 
 c_options = {'logout': 1,
             'status': 2,
@@ -151,10 +87,10 @@ c_options = {'logout': 1,
                 'link':
                     {'repo': 16}},
             'reconcile': 17}
-			
-
-todo-
-team lieutenant complete
-list create edit delete
-link unlink user
-you can always start adding comments
+		
+		
+		
+1. command parse (start with one group)
+2. -->
+get id -> helpers
+validation vrstva - validace user inputu

@@ -1,15 +1,10 @@
 from api.github_link import GitHubLink
+from application.repo_lieutenant import RepoLieutenant
 from application.ssh_manager import SSHManager
-from helper.key_helper import KeyHelper
-from helper.org_helper import OrganizationHelper
-from helper.repo_helper import RepositoryHelper
-from helper.team_helper import TeamHelper
-from helper.team_repo_helper import TeamRepositoryHelper
-from helper.user_helper import UserHelper
-from db.manager import DBManager
-import json
+from application.team_lieutenant import TeamLieutenant
 
 from storage import SQLiteClient
+from parser.cat_arg_parse import CatArgParse
 
 
 class CLI:
@@ -24,6 +19,11 @@ class CLI:
         self._client = SQLiteClient(file_path="mydb.db", password=self._db_pass)
         self._gh_link = GitHubLink(self._org_name, self._gh_token)
         self._ssh = SSHManager()
+        self._repo_lieutenant = RepoLieutenant(self._client, self._org_name)
+        self._team_lieutenant = TeamLieutenant(self._client, self._org_name)
+        self._arg_parse = CatArgParse()
+
+        self._load_args()
 
     def _load_secrets(self):
         f = open("../secrets.txt", "r")
@@ -35,31 +35,6 @@ class CLI:
         self._db_pass = pass_line.split(' ')[1]
 
     def command_loop(self):
-        c_options = {'logout': 1,
-                     'status': 2,
-                     'repo':
-                         {'list': 3,
-                          'create': 4,
-                          'edit':
-                              {'name': 5},
-                          'delete': 6},
-                     'team':
-                         {'create': 7,
-                          'edit':
-                              {'name': 8},
-                          'delete': 9,
-                          'link':
-                              {'role': 10},
-                          'unlink': 11,
-                          'user':
-                              {'add': 12,
-                               'remove': 13}},
-                     'ssh':
-                         {'generate': 14,
-                          'show': 15,
-                          'link':
-                              {'repo': 16}},
-                     'reconcile': 17}
         logging = True
         while logging:
             command = input('Input username and password: ')
@@ -73,7 +48,11 @@ class CLI:
         while logged_in:
             command = input()
             if 'help' in command:
-                print(c_options)
+                self._arg_parse.get_help()
+            else:
+                command_list = command.split()
+                parsed = self._arg_parse.return_cats(command_list)
+                print(parsed)
 
     def login(self, username, password):
         # TODO : temporary, users can be saved in db, and set as active
@@ -85,6 +64,15 @@ class CLI:
     def c_status(self):
         # Command : 'status', checking if connection is made
         self._gh_link.check_status()
+
+    def _load_args(self):
+        self._arg_parse.edit_or_add_category(cat_key='logout', inputs=0)
+        self._arg_parse.edit_or_add_category(cat_key='repo', inputs=0)
+        self._arg_parse.edit_or_add_category(cat_key='list', inputs=0, parent='repo')
+        self._arg_parse.edit_or_add_category(cat_key='create', inputs=1, parent='repo')
+        self._arg_parse.edit_or_add_category(cat_key='edit', inputs=1, parent='repo')
+        self._arg_parse.edit_or_add_category(cat_key='delete', inputs=1, parent='repo')
+        self._arg_parse.edit_or_add_category(cat_key='name', inputs=1, parent='edit')
 
     @staticmethod
     def _open_login_info() -> dict:

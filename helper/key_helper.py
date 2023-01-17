@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 from helper.generic_helper import GenericHelper
 from storage import SQLiteClient

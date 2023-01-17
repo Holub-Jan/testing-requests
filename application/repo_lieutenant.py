@@ -10,7 +10,7 @@ class RepoLieutenant(GenericLieutenant):
     def list(self):
         org_id = self._org_id()
         repo_list = self.org_table.get_details(org_id).repositories
-        print(repo_list)
+        print(repo_list) # todo
 
     def create(self, repo_name: str):
         org_id = self._org_id()
