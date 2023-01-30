@@ -42,7 +42,7 @@ read_only bool
 
 
 --login {username} --password (prompt.)
---logout
+--logout sudo apt -y install ncal
 --status
 --repo --list
 --repo --create {repo_name}
@@ -94,3 +94,7 @@ c_options = {'logout': 1,
 2. -->
 get id -> helpers
 validation vrstva - validace user inputu
+
+
+notes:
+just repo can be used and do nothing

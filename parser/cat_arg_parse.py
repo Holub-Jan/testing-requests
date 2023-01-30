@@ -1,8 +1,23 @@
+from pydantic import BaseModel
+
+
+class CatWord(BaseModel):
+    name: str
+    inputs: int = 0
+    children: list = []
+    arguments: list = []
+    description: str = ''
+
+
 class CatArgParse:
-    def __init__(self):
+    def __init__(self, name: str = 'parser'):
+        # TODO : make it work with objects instead of dict
         self._cat_dict = dict()
         self._args = list()
         self._arg_cats = list()
+
+        # rework below
+        self._cat_stack = CatWord(name=name)
 
     def return_cats(self, args: list):
         # --repo --edit {repo_name} --name {new_repo_name}
@@ -70,3 +85,14 @@ class CatArgParse:
                   f'\nDescription: {value["description"]}'
                   f'\nNumber of inputs {value["inputs"]}'
                   f'\nParent: {value["parent"]}\n')
+
+    def add_cat(self, name: str, inputs: int = 0, description: str = ''):
+        # todo
+        cat = CatWord(name=name, inputs=inputs, description=description)
+        self._cat_stack.append(cat)
+        return cat
+
+    def add_argument(self, name: str, inputs: int = 0, description: str = ''):
+        # todo
+        pass
+

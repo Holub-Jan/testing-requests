@@ -32,3 +32,11 @@ class GenericHelper(ABC):
 
     def update(self, *args, **kwargs):
         pass
+
+    def update_row_by_id(self, *args, **kwargs):
+        # todo abstract
+        pass
+
+    def get_id(self, *args, **kwargs):
+        # todo abstract
+        pass

@@ -33,3 +33,10 @@ class TeamRepositoryHelper(GenericHelper):
 
     def get_role(self, query: List[Tuple]):
         return self._team_repo_storage.select_by_query(query)[0].role
+
+    def get_id(self, name: str, team_id: int, org_id: int, role: str):
+        query = [('name', name), ('team_id', team_id), ('org_id', org_id)]
+        team_repo_exists = self.exists(query)
+        if team_repo_exists:
+            team_repo_obj = self.get_or_create(name, team_id, org_id, role)
+            return team_repo_obj[0].id_

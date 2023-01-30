@@ -46,3 +46,10 @@ class RepositoryHelper(GenericHelper):
 
     def exists(self, query: List[Tuple]):
         return self._repo_storage.select_by_query(query)
+
+    def get_id(self, name: str, org_id: int):
+        query = [('name', name), ('org_id', org_id)]
+        repo_exists = self.exists(query)
+        if repo_exists:
+            repo_obj = self.get_or_create(name, org_id)
+            return repo_obj[0].id_

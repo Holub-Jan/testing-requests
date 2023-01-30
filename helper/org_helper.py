@@ -44,3 +44,10 @@ class OrganizationHelper(GenericHelper):
 
     def exists(self, query: List[Tuple]):
         return self._org_storage.select_by_query(query)
+
+    def get_id(self, name: str, org_id: int):
+        query = [('name', name)]
+        org_exists = self.exists(query)
+        if org_exists:
+            org_obj = self.get_or_create(name)
+            return org_obj[0].id_

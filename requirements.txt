@@ -2,3 +2,4 @@ pysqlitecipher
 requests
 cryptography >= 1.4.0
 pydantic
+argparse

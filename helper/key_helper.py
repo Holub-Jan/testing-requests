@@ -34,3 +34,11 @@ class KeyHelper(GenericHelper):
 
     def exists(self, query: List[Tuple]):
         return self._key_storage.select_by_query(query)
+
+    def get_id(self, name: str, team_id: int):
+        query = [('name', name), ('team_id', team_id)]
+        user_exists = self.exists(query)
+        if user_exists:
+            user_obj = self._key_storage.select_by_query(query)
+            return user_obj[0].id_
+

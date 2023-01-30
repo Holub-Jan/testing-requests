@@ -30,3 +30,10 @@ class UserHelper(GenericHelper):
 
     def exists(self, query: List[Tuple]):
         return self._user_storage.select_by_query(query)
+
+    def get_id(self, name: str, team_id: int):
+        query = [('name', name), ('team_id', team_id)]
+        user_exists = self.exists(query)
+        if user_exists:
+            user_obj = self.get_or_create(name, team_id)
+            return user_obj[0].id_
