@@ -90,11 +90,17 @@ c_options = {'logout': 1,
 		
 		
 		
-1. command parse (start with one group)
-2. -->
-get id -> helpers
-validation vrstva - validace user inputu
+1. update lieutenants command funcs
+2. test run
+3. validators
 
 
-notes:
-just repo can be used and do nothing
+def check_database(func):
+
+    def inner(*inner_args, **inner_kwargs):
+        print("Hello")
+        return func(*inner_args, **inner_kwargs)
+    return inner
+	
+	
+	

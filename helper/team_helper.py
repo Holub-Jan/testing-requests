@@ -39,9 +39,15 @@ class TeamHelper(GenericHelper):
 
         self._team_storage.update_ids()
 
-    def update(self):
-        # todo create update method
-        pass
+    def update_row_by_id(self, row_data):
+        return self._team_storage.update_row_by_id(row_data)
 
     def exists(self, query: List[Tuple]):
         return self._team_storage.select_by_query(query)
+
+    def get_id(self, name: str, org_id: int):
+        query = [('name', name), ('org_id', org_id)]
+        team_exists = self.exists(query)
+        if team_exists:
+            team_obj = self.get_or_create(name, org_id)
+            return team_obj[0].id_

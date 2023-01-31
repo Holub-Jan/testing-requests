@@ -28,9 +28,8 @@ class KeyHelper(GenericHelper):
 
         self._key_storage.update_ids()
 
-    def update(self):
-        # todo create update method
-        pass
+    def update_row_by_id(self, row_data):
+        return self._key_storage.update_row_by_id(row_data)
 
     def exists(self, query: List[Tuple]):
         return self._key_storage.select_by_query(query)

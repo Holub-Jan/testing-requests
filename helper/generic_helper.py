@@ -19,7 +19,6 @@ class GenericHelper(ABC):
 
     @abstractmethod
     def get_or_create(self, *args, **kwargs):
-        # TODO : create check if exists and get
         pass
 
     @abstractmethod
@@ -30,13 +29,10 @@ class GenericHelper(ABC):
     def exists(self, *args, **kwargs):
         pass
 
-    def update(self, *args, **kwargs):
-        pass
-
+    @abstractmethod
     def update_row_by_id(self, *args, **kwargs):
-        # todo abstract
         pass
 
+    @abstractmethod
     def get_id(self, *args, **kwargs):
-        # todo abstract
         pass

@@ -18,6 +18,10 @@ class GHParser:
         repo_create_parser = repo_verb_subparser.add_parser("create")
         repo_create_parser.add_argument("name", action="store")
 
+        repo_edit_parser = repo_verb_subparser.add_parser("edit")
+        repo_edit_parser.add_argument("old_name", action="store")
+        repo_edit_parser.add_argument("--new_name", action='store', type=str)
+
         login_parser = kind_subparser.add_parser("login")
         login_parser.add_argument("--username", action='store', type=str)
         login_parser.add_argument("--password", action='store', type=str)

@@ -4,9 +4,8 @@ from storage import SQLiteClient
 
 
 class TeamLieutenant(GenericLieutenant):
-    # TODO : Create more pleasing way of printing messages?
-    def __init__(self, org_name: str, table: TeamHelper):
-        super().__init__(org_name, table)
+    def __init__(self, org_name: str, tables):
+        super().__init__(org_name, tables)
         self.kind = 'team'
 
     def cmd_list(self):
@@ -52,7 +51,7 @@ class TeamLieutenant(GenericLieutenant):
             print(f'Team not found, couldnt delete team: {team_name}')
 
     def cmd_link(self, team_name: str, repo_name: str, role: str):
-        # TODO : create team linking func
+        # TODO : update team linking func
         org_id = self._org_id()
 
         team_query = [('name', team_name), ('org_id', org_id)]

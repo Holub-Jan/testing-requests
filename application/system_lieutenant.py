@@ -7,12 +7,12 @@ from application.generic_lieutenant import GenericLieutenant
 class SystemLieutenant(GenericLieutenant):
     # TODO : not complete
     def __init__(self, gh_token):
-        super().__init__(org_name='', table='')
+        super().__init__(org_name='', tables={})
         self._gh_link = GitHubLink(self._org_name, gh_token)
         self.logged_bool = False
 
     def cmd_login(self, username, password):
-        # TODO : temporary, users can be saved in db, and set as active
+        # temporary, users can be saved in db, and set as active
         if not self.logged_bool:
             pass_list = self._open_login_info()
             if username in pass_list.keys() and password == pass_list[username]['password']:
@@ -49,5 +49,5 @@ class SystemLieutenant(GenericLieutenant):
     def command_check(self, args: Namespace):
         kind = args.kind
         if hasattr(self, f"cmd_{kind}"):
-            return 1
-        return 0
+            return getattr(self, f"cmd_{kind}")
+        return None

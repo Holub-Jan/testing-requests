@@ -11,7 +11,7 @@ class CatWord(BaseModel):
 
 class CatArgParse:
     def __init__(self, name: str = 'parser'):
-        # TODO : make it work with objects instead of dict
+        # SIDE PROJECT,  to be completed
         self._cat_dict = dict()
         self._args = list()
         self._arg_cats = list()
@@ -87,12 +87,10 @@ class CatArgParse:
                   f'\nParent: {value["parent"]}\n')
 
     def add_cat(self, name: str, inputs: int = 0, description: str = ''):
-        # todo
         cat = CatWord(name=name, inputs=inputs, description=description)
         self._cat_stack.append(cat)
         return cat
 
     def add_argument(self, name: str, inputs: int = 0, description: str = ''):
-        # todo
         pass
 

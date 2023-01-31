@@ -38,14 +38,13 @@ class OrganizationHelper(GenericHelper):
 
         self._org_storage.update_ids()
 
-    def update(self):
-        # todo create update method
-        pass
+    def update_row_by_id(self, row_data):
+        return self._org_storage.update_row_by_id(row_data)
 
     def exists(self, query: List[Tuple]):
         return self._org_storage.select_by_query(query)
 
-    def get_id(self, name: str, org_id: int):
+    def get_id(self, name: str):
         query = [('name', name)]
         org_exists = self.exists(query)
         if org_exists:
