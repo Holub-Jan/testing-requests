@@ -71,7 +71,7 @@ class GenericStorage:
     def delete_by_id(self, id_: int, update_id: bool = True):
         # Delete row by id if it exists
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
-        ids = [row[table_cols.index['ID']] for row in table_data]
+        ids = [row[table_cols.index('ID')] for row in table_data]
         if id_ in ids:
             self.db.deleteDataInTable(tableName=self._table_name, iDValue=id_, updateId=update_id)
             return True  # Do I need this?

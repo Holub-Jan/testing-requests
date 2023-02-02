@@ -102,5 +102,5 @@ def check_database(func):
         return func(*inner_args, **inner_kwargs)
     return inner
 	
-	
+sealed secrets, automatizatica pouziti
 	

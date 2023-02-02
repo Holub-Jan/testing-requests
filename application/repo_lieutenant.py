@@ -1,4 +1,4 @@
-from application.generic_lieutenant import GenericLieutenant
+from application.generic_lieutenant import GenericLieutenant, hello
 from helper.repo_helper import RepositoryHelper
 from storage import SQLiteClient
 
@@ -11,6 +11,7 @@ class RepoLieutenant(GenericLieutenant):
         self.kind = 'repo'
         self._org_name = org_name
 
+    @hello
     def cmd_list(self, **kwargs):
         org_id = self._org_table.get_id(self._org_name)
         repo_list = self._org_table.get_details(org_id).repositories
@@ -34,10 +35,10 @@ class RepoLieutenant(GenericLieutenant):
 
         org_id = self._org_table.get_id(self._org_name)
         repo_query = [('name', repo_name), ('org_id', org_id)]
-        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists([repo_query]) else False
+        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else False
 
         if repo_id is not None:
-            repo_obj = self._repo_table.get_or_create(repo_name, org_id)
+            repo_obj = self._repo_table.get_or_create(repo_name, org_id)[0]
             repo_obj.name = new_name
 
             try:
@@ -54,9 +55,9 @@ class RepoLieutenant(GenericLieutenant):
 
         org_id = self._org_table.get_id(self._org_name)
         repo_query = [('name', repo_name), ('org_id', org_id)]
-        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists([repo_query]) else False
+        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else False
 
-        if repo_id:
+        if repo_id is not None:
             self._repo_table.delete_by_ids([repo_id])
             print(f'Repository {repo_name} deleted')
         else:
