@@ -50,12 +50,18 @@ class CLI:
 
     def command_loop(self):
         while True:
+            logged_in = self._system_lieutenant.logged_bool
             input_ = input('Command: ').split()
             par = self._parser.parse(input_)
             checks = self.checker(par)
             checks = [c for c in checks if c is not None]
             print(par)
-            if checks:
+            if not logged_in:
+                if par.kind in ['login', 'exit'] and checks:
+                    checks[0](**par.__dict__)
+                else:
+                    print('Please login first.')
+            elif checks:
                 checks[0](**par.__dict__)
             print()
 

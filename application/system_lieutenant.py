@@ -11,7 +11,9 @@ class SystemLieutenant(GenericLieutenant):
         self._gh_link = GitHubLink(self._org_name, gh_token)
         self.logged_bool = False
 
-    def cmd_login(self, username, password):
+    def cmd_login(self, **kwargs):
+        username = kwargs.get('username')
+        password = kwargs.get('password')
         # temporary, users can be saved in db, and set as active
         if not self.logged_bool:
             pass_list = self._open_login_info()
@@ -21,10 +23,10 @@ class SystemLieutenant(GenericLieutenant):
                 return pass_list[username]['organization']
         print('User already logged in, please logout first.')
 
-    def cmd_logout(self):
+    def cmd_logout(self, **kwargs):
         self.logged_bool = False
 
-    def cmd_status(self):
+    def cmd_status(self, **kwargs):
         # Command : 'status', checking if connection is made
         self._gh_link.check_status()
 
@@ -32,7 +34,7 @@ class SystemLieutenant(GenericLieutenant):
         pass
 
     @staticmethod
-    def cmd_exit():
+    def cmd_exit(**kwargs):
         exit()
 
     @staticmethod
