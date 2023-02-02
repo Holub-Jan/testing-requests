@@ -98,7 +98,7 @@ class GenericStorage:
         data_dict = data_raw.dict()
         row_id = data_dict['id_']
         table_cols, table_data = self.db.getDataFromTable(self._table_name)
-        ids = [row[table_cols.index['ID']] for row in table_data]
+        ids = [row[table_cols.index('ID')] for row in table_data]
 
         if row_id in ids:
             original_row = self.select_by_id(data_dict['id_']).dict()
