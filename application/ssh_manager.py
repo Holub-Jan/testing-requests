@@ -15,8 +15,8 @@ class SSHManager:
 
         return private_key, public_key
 
-    def _gen_new_keys(self):
-        # TODO : add additional options for encoding?
+    @staticmethod
+    def _gen_new_keys():
         key = rsa.generate_private_key(
             backend=crypto_default_backend(),
             public_exponent=65537,

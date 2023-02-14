@@ -1,13 +1,10 @@
-from application.generic_lieutenant import GenericLieutenant, hello
-from helper.repo_helper import RepositoryHelper
-from storage import SQLiteClient
+from application.generic_lieutenant import GenericLieutenant
+from validators import Validator
 
 
 class RepoLieutenant(GenericLieutenant):
     def __init__(self, org_name: str, tables):
         super().__init__(org_name, tables)
-        self._org_table = self._tables.get('org')
-        self._repo_table = self._tables.get('repo')
         self.kind = 'repo'
         self._org_name = org_name
 
@@ -23,6 +20,7 @@ class RepoLieutenant(GenericLieutenant):
         repo_name = kwargs.get('name')
 
         org_id = self._org_table.get_id(self._org_name)
+
         if org_id is not None:
             repo_obj = self._repo_table.get_or_create(repo_name, org_id)
             print(f'Repository created: {repo_obj}')
@@ -30,12 +28,13 @@ class RepoLieutenant(GenericLieutenant):
             print(f'Organization not found, couldnt create repository: {repo_name}')
 
     def cmd_edit(self, **kwargs):
-        repo_name = kwargs.get('old_name')
+        repo_name = kwargs.get('repo_name')
         new_name = kwargs.get('new_name')
 
         org_id = self._org_table.get_id(self._org_name)
+
         repo_query = [('name', repo_name), ('org_id', org_id)]
-        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else False
+        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else None
 
         if repo_id is not None:
             repo_obj = self._repo_table.get_or_create(repo_name, org_id)[0]
@@ -51,11 +50,11 @@ class RepoLieutenant(GenericLieutenant):
             print(f'Repository not found, couldnt edit repository name to {new_name}')
 
     def cmd_delete(self, **kwargs):
-        repo_name = kwargs.get('name')
+        repo_name = kwargs.get('repo_name')
 
         org_id = self._org_table.get_id(self._org_name)
         repo_query = [('name', repo_name), ('org_id', org_id)]
-        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else False
+        repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else None
 
         if repo_id is not None:
             self._repo_table.delete_by_ids([repo_id])

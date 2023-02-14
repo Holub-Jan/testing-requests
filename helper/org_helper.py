@@ -29,7 +29,7 @@ class OrganizationHelper(GenericHelper):
         repos = self._repo_storage.select_by_query(query)
         teams = self._team_storage.select_by_query(query)
 
-        org = OOrganization(repositories=repos, team=teams)
+        org = OOrganization(repositories=repos, teams=teams)
         return org
 
     def delete_by_ids(self, ids_: List[int]):

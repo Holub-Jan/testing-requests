@@ -1,4 +1,5 @@
 from argparse import Namespace
+from inspect import signature
 
 from application.repo_lieutenant import RepoLieutenant
 from application.ssh_manager import SSHManager
@@ -50,7 +51,7 @@ class CLI:
 
     def command_loop(self):
         while True:
-            logged_in = self._system_lieutenant.logged_bool
+            logged_in = True # self._system_lieutenant.logged_bool
             input_ = input('Command: ').split()
             par = self._parser.parse(input_)
             checks = self.checker(par)
@@ -62,7 +63,10 @@ class CLI:
                 else:
                     print('Please login first.')
             elif checks:
-                checks[0](**par.__dict__)
+                if len(signature(checks[0]).parameters) > 0:
+                    checks[0](**par.__dict__)
+                else:
+                    checks[0]()
             print()
 
     def checker(self, args: Namespace):

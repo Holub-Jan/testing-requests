@@ -23,10 +23,10 @@ class SystemLieutenant(GenericLieutenant):
                 return pass_list[username]['organization']
         print('User already logged in, please logout first.')
 
-    def cmd_logout(self, **kwargs):
+    def cmd_logout(self):
         self.logged_bool = False
 
-    def cmd_status(self, **kwargs):
+    def cmd_status(self):
         # Command : 'status', checking if connection is made
         self._gh_link.check_status()
 
@@ -34,7 +34,7 @@ class SystemLieutenant(GenericLieutenant):
         pass
 
     @staticmethod
-    def cmd_exit(**kwargs):
+    def cmd_exit():
         exit()
 
     @staticmethod

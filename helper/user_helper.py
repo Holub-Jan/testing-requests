@@ -36,3 +36,7 @@ class UserHelper(GenericHelper):
         if user_exists:
             user_obj = self.get_or_create(name, team_id)
             return user_obj[0].id_
+
+    def get_name(self, user_id: int, team_id: int):
+        query = [('ID', user_id), ('team_id', team_id)]
+        return self._user_storage.select_by_query(query)[0].name

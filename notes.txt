@@ -104,3 +104,5 @@ def check_database(func):
 	
 sealed secrets, automatizatica pouziti
 	
+	
+	

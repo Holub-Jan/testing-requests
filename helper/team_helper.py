@@ -27,7 +27,7 @@ class TeamHelper(GenericHelper):
 
     def get_details(self, name: str, team_id: int) -> TTeam:
         query = [('team_id', team_id)]
-        repos = self._repo_storage.select_by_query(query)
+        repos = self._team_repo_storage.select_by_query(query)
         users = self._user_storage.select_by_query(query)
 
         team = TTeam(name=name, repositories=repos, users=users)
