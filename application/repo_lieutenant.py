@@ -1,4 +1,4 @@
-from application.generic_lieutenant import GenericLieutenant
+from application.generic_lieutenant import GenericLieutenant, validate_inputs
 from validators import Validator
 
 
@@ -8,14 +8,14 @@ class RepoLieutenant(GenericLieutenant):
         self.kind = 'repo'
         self._org_name = org_name
 
-    @hello
-    def cmd_list(self, **kwargs):
+    def cmd_list(self):
         org_id = self._org_table.get_id(self._org_name)
         repo_list = self._org_table.get_details(org_id).repositories
         print(f'Repositories for organization {self._org_name}:')
         for repo in repo_list:
             print(repo)
 
+    @validate_inputs(to_validate=['repo_name_not_exist'])
     def cmd_create(self, **kwargs):
         repo_name = kwargs.get('name')
 
@@ -27,9 +27,10 @@ class RepoLieutenant(GenericLieutenant):
         else:
             print(f'Organization not found, couldnt create repository: {repo_name}')
 
+    @validate_inputs(to_validate=['repo_name_exists', 'repo_name_not_exist'])
     def cmd_edit(self, **kwargs):
         repo_name = kwargs.get('repo_name')
-        new_name = kwargs.get('new_name')
+        new_name = kwargs.get('name')
 
         org_id = self._org_table.get_id(self._org_name)
 
@@ -49,6 +50,7 @@ class RepoLieutenant(GenericLieutenant):
         else:
             print(f'Repository not found, couldnt edit repository name to {new_name}')
 
+    @validate_inputs(to_validate=['repo_name_exists'])
     def cmd_delete(self, **kwargs):
         repo_name = kwargs.get('repo_name')
 

@@ -39,7 +39,7 @@ class TeamLieutenant(GenericLieutenant):
 
     def cmd_edit(self, **kwargs):
         team_name = kwargs.get('team_name')
-        new_name = kwargs.get('new_name')
+        new_name = kwargs.get('name')
 
         org_id = self._org_table.get_id(self._org_name)
 
@@ -104,7 +104,7 @@ class TeamLieutenant(GenericLieutenant):
         repo_id = self._repo_table.get_id(repo_name, org_id) if self._repo_table.exists(repo_query) else None
 
         if team_id is not None and repo_id is not None:
-            self._team_repo_table.get_or_create(team_name, team_id, org_id, role)
+            self._team_repo_table.get_or_create(team_name, team_id, repo_id, role)
             print(f'Repository {repo_name} linked with {team_name} team.')
 
         else:

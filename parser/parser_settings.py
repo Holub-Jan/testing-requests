@@ -28,7 +28,7 @@ class GHParser:
 
         repo_edit_parser = repo_verb_subparser.add_parser("edit")
         repo_edit_parser.add_argument("repo_name", action="store")
-        repo_edit_parser.add_argument("--new_name", action='store', type=str)
+        repo_edit_parser.add_argument("--name", action='store', type=str)
 
         repo_delete_parser = repo_verb_subparser.add_parser("delete")
         repo_delete_parser.add_argument("repo_name", action="store")
@@ -47,7 +47,7 @@ class GHParser:
 
         team_edit_parser = team_verb_subparser.add_parser("edit")
         team_edit_parser.add_argument("team_name", action="store")
-        team_edit_parser.add_argument("--new_name", action='store', type=str)
+        team_edit_parser.add_argument("--name", action='store', type=str)
 
         team_link_parser = team_verb_subparser.add_parser("link")
         team_link_parser.add_argument("team_name", action="store")
