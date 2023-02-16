@@ -80,7 +80,6 @@ class GenericStorage:
 
     def update_ids(self):
         # Update ids in the table
-        # TODO : need to update ids of the object as well !!!!!DO NOT USE!!!!!
         self.db.updateIDs(self._table_name, commit=True)
 
     def update_column_by_id(self, id_: int, col_name: str, col_value: str):

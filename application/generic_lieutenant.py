@@ -17,11 +17,13 @@ def validate_inputs(**valid_kwargs):
                     cat_val = getattr(self, f"val_{cat}")(**inner_kwargs)
                     validated_list.append(cat_val)
                 else:
+                    # TODO : do i need this? throws me out of the loop
                     raise NameError(f'(Validation type) Validation category "{cat}" was not found.')
 
             if min(validated_list):
                 return func(*inner_args, **inner_kwargs)
             error_list = [to_validate[inx] for inx in range(len(validated_list)) if not validated_list[inx]]
+            # TODO : do i need this? throws me out of the loop
             raise NameError(f'(Validation type) Could not validate data for ', ', '.join(error_list))
 
         return inner
