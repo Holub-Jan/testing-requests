@@ -61,7 +61,7 @@ class GenericLieutenant(ABC):
             if exists:
                 return True
 
-            print(f'Repository {repo_name} does not exist.')
+            print(f'Repository "{repo_name}" does not exist.')
 
         print('!! repo_name is argument missing (check validator assignment) !!')
         return False
@@ -77,7 +77,7 @@ class GenericLieutenant(ABC):
             if not exists:
                 return True
 
-            print(f'Repository {repo_name} exists.')
+            print(f'Repository "{repo_name}" exists.')
             return False
 
         print('!! repo_name is argument missing (check validator assignment) !!')
@@ -94,7 +94,7 @@ class GenericLieutenant(ABC):
             if exists:
                 return True
 
-            print(f'Team {team_name} does not exist.')
+            print(f'Team "{team_name}" does not exist.')
 
         print('!! team_name is argument missing (check validator assignment) !!')
         return False
@@ -110,7 +110,7 @@ class GenericLieutenant(ABC):
             if not exists:
                 return True
 
-            print(f'Team {team_name} exists.')
+            print(f'Team "{team_name}" exists.')
             return False
 
         print('!! team_name is argument missing (check validator assignment) !!')
@@ -132,7 +132,7 @@ class GenericLieutenant(ABC):
                 if exists:
                     return True
 
-                print(f'Repository {repo_name} and team {team_name} are not linked.')
+                print(f'Repository "{repo_name}" and team "{team_name}" are not linked.')
                 return False
 
         print('!! repo_name and/or team_name arguments are missing (check validator assignment) !!')
@@ -154,7 +154,7 @@ class GenericLieutenant(ABC):
                 if not exists:
                     return True
 
-                print(f'Repository {repo_name} and team {team_name} are linked currently.')
+                print(f'Repository "{repo_name}" and team "{team_name}" are linked currently.')
                 return False
 
         print('!! repo_name and/or team_name arguments are missing (check validator assignment) !!')
@@ -175,7 +175,7 @@ class GenericLieutenant(ABC):
                 if exists:
                     return True
 
-                print(f'User {remove_name} does not exist.')
+                print(f'User "{remove_name}" does not exist.')
                 return False
 
         print('!! remove and/or team_name arguments are missing (check validator assignment) !!')
@@ -196,7 +196,7 @@ class GenericLieutenant(ABC):
                 if not exists:
                     return True
 
-                print(f'User {add_name} exists currently.')
+                print(f'User "{add_name}" exists currently.')
                 return False
 
         print('!! add and/or team_name arguments are missing (check validator assignment) !!')

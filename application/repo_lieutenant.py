@@ -15,7 +15,7 @@ class RepoLieutenant(GenericLieutenant):
         for repo in repo_list:
             print(repo)
 
-    @validate_inputs(to_validate=['repo_name_not_exist'])
+    @validate_inputs(to_validate=['repo_not_exist'])
     def cmd_create(self, **kwargs):
         repo_name = kwargs.get('name')
 
@@ -27,7 +27,7 @@ class RepoLieutenant(GenericLieutenant):
         else:
             print(f'Organization not found, couldnt create repository: {repo_name}')
 
-    @validate_inputs(to_validate=['repo_name_exists', 'repo_name_not_exist'])
+    @validate_inputs(to_validate=['repo_exists', 'repo_not_exist'])
     def cmd_edit(self, **kwargs):
         repo_name = kwargs.get('repo_name')
         new_name = kwargs.get('name')
@@ -50,7 +50,7 @@ class RepoLieutenant(GenericLieutenant):
         else:
             print(f'Repository not found, couldnt edit repository name to {new_name}')
 
-    @validate_inputs(to_validate=['repo_name_exists'])
+    @validate_inputs(to_validate=['repo_exists'])
     def cmd_delete(self, **kwargs):
         repo_name = kwargs.get('repo_name')
 
