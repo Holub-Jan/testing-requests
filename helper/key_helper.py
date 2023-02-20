@@ -1,23 +1,43 @@
-from container.generic_helper import GenericHelper
+from typing import List, Tuple
+
+from helper.generic_helper import GenericHelper
 from storage import SQLiteClient
-from storage.key_storage import KeyStorage
 from storage.models import Key
 
 
 class KeyHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
-        self.storage = KeyStorage(client)
 
     def get_or_create(self, name: str, repo_id: int, private_key: str, public_key: str, read_only: int):
         # Returning key row, if it doesn't exist, it also creates it
         query = [('name', name), ('repo_id', repo_id)]
-        key = self.storage.select_by_query(query)
-        if not key:
+        key_exists = self.exists(query)
+        if not key_exists:
             new_key = Key(name=name,
                           repo_id=repo_id,
                           private_key=private_key,
                           public_key=public_key,
                           read_only=read_only)
-            self.storage.create(new_key)
-        return self.storage.select_by_query(query)
+            self._key_storage.create(new_key)
+        return self._key_storage.select_by_query(query)
+
+    def delete_by_ids(self, ids_: List[int]):
+        for id_ in ids_:
+            self._key_storage.delete_by_id(id_, False)
+
+        self._key_storage.update_ids()
+
+    def update_row_by_id(self, row_data):
+        return self._key_storage.update_row_by_id(row_data)
+
+    def exists(self, query: List[Tuple]):
+        return self._key_storage.select_by_query(query)
+
+    def get_id(self, name: str, team_id: int):
+        query = [('name', name), ('team_id', team_id)]
+        user_exists = self.exists(query)
+        if user_exists:
+            user_obj = self._key_storage.select_by_query(query)
+            return user_obj[0].id_
+

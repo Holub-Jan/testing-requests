@@ -1,11 +1,9 @@
-from pydantic import BaseModel
+from typing import List, Tuple
 
-from container.generic_helper import GenericHelper
+from pydantic import BaseModel
+from helper.generic_helper import GenericHelper
 from storage import SQLiteClient
 from storage.models import Team
-from storage.repository_storage import RepositoryStorage
-from storage.team_storage import TeamStorage
-from storage.user_storage import UserStorage
 
 
 class TTeam(BaseModel):
@@ -17,23 +15,39 @@ class TTeam(BaseModel):
 class TeamHelper(GenericHelper):
     def __init__(self, client: SQLiteClient):
         super().__init__(client)
-        self._team_storage = TeamStorage(client)
-        self._repo_storage = RepositoryStorage(client)
-        self._user_storage = UserStorage(client)
 
     def get_or_create(self, name: str, org_id: int):
         # Returning team row, if it doesn't exist, it also creates it
         query = [('name', name), ('org_id', org_id)]
-        team = self._team_storage.select_by_query(query)
-        if not team:
+        team_exists = self.exists(query)
+        if not team_exists:
             new_team = Team(name=name, org_id=org_id)
             self._team_storage.create(new_team)
         return self._team_storage.select_by_query(query)
 
     def get_details(self, name: str, team_id: int) -> TTeam:
         query = [('team_id', team_id)]
-        repos = self._repo_storage.select_by_query(query)
+        repos = self._team_repo_storage.select_by_query(query)
         users = self._user_storage.select_by_query(query)
 
         team = TTeam(name=name, repositories=repos, users=users)
         return team
+
+    def delete_by_ids(self, ids_: List[int]):
+        for id_ in ids_:
+            self._team_storage.delete_by_id(id_, False)
+
+        self._team_storage.update_ids()
+
+    def update_row_by_id(self, row_data):
+        return self._team_storage.update_row_by_id(row_data)
+
+    def exists(self, query: List[Tuple]):
+        return self._team_storage.select_by_query(query)
+
+    def get_id(self, name: str, org_id: int):
+        query = [('name', name), ('org_id', org_id)]
+        team_exists = self.exists(query)
+        if team_exists:
+            team_obj = self.get_or_create(name, org_id)
+            return team_obj[0].id_

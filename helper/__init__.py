@@ -1,4 +1,4 @@
-from container.org_helper import OrganizationHelper
+from helper.org_helper import OrganizationHelper
 from storage import SQLiteClient
 
 if __name__ == "__main__":

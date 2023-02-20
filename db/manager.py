@@ -32,12 +32,10 @@ class DBManager:
         self.db.updateIDs(table_name, commit=True)
 
     def get_all_tables(self):
-        # TODO : do i need this?
         # No usage currently
         return self.db.getAllTableNames()
 
     def desc_table(self, table_name):
-        # TODO : do i need this?
         # No usage currently
         # Returns table headers and their data types
         return self.db.describeTable(table_name)
