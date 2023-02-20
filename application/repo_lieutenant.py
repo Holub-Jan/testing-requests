@@ -1,4 +1,5 @@
 from application.generic_lieutenant import GenericLieutenant, validate_inputs
+from application.validators import Valid
 
 
 class RepoLieutenant(GenericLieutenant):
@@ -14,7 +15,7 @@ class RepoLieutenant(GenericLieutenant):
         for repo in repo_list:
             print(repo)
 
-    @validate_inputs(to_validate=['repo_not_exist'])
+    @validate_inputs(to_validate=[Valid.REPO_NOT_EXISTS])
     def cmd_create(self, **kwargs):
         repo_name = kwargs.get('name')
         org_id = self._org_table.get_id(self._org_name)
@@ -22,7 +23,7 @@ class RepoLieutenant(GenericLieutenant):
         repo_obj = self._repo_table.get_or_create(repo_name, org_id)
         print(f'Repository created: {repo_obj}')
 
-    @validate_inputs(to_validate=['repo_exists', 'repo_not_exist'])
+    @validate_inputs(to_validate=[Valid.REPO_EXISTS, Valid.REPO_NOT_EXISTS])
     def cmd_edit(self, **kwargs):
         repo_name = kwargs.get('repo_name')
         new_name = kwargs.get('name')
@@ -35,7 +36,7 @@ class RepoLieutenant(GenericLieutenant):
         self._repo_table.update_row_by_id(repo_obj)
         print(f'Repository name changed to {new_name}')
 
-    @validate_inputs(to_validate=['repo_exists'])
+    @validate_inputs(to_validate=[Valid.REPO_EXISTS])
     def cmd_delete(self, **kwargs):
         repo_name = kwargs.get('repo_name')
 

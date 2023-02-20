@@ -1,4 +1,5 @@
 from application.generic_lieutenant import GenericLieutenant, validate_inputs
+from application.validators import Valid
 
 
 class TeamLieutenant(GenericLieutenant):
@@ -25,7 +26,7 @@ class TeamLieutenant(GenericLieutenant):
 
             print(team, rep_lst, user_lst)
 
-    @validate_inputs(to_validate=['team_not_exist'])
+    @validate_inputs(to_validate=[Valid.TEAM_NOT_EXISTS])
     def cmd_create(self, **kwargs):
         team_name = kwargs.get('name')
         org_id = self._org_table.get_id(self._org_name)
@@ -33,7 +34,7 @@ class TeamLieutenant(GenericLieutenant):
         team_obj = self._team_table.get_or_create(team_name, org_id)
         print(f'Team created: {team_obj}')
 
-    @validate_inputs(to_validate=['team_exists', 'team_not_exist'])
+    @validate_inputs(to_validate=[Valid.TEAM_EXISTS, Valid.TEAM_NOT_EXISTS])
     def cmd_edit(self, **kwargs):
         team_name = kwargs.get('team_name')
         new_name = kwargs.get('name')
@@ -44,7 +45,7 @@ class TeamLieutenant(GenericLieutenant):
         team_obj.name = new_name
         self._team_table.update_row_by_id(team_obj)
 
-    @validate_inputs(to_validate=['team_exists'])
+    @validate_inputs(to_validate=[Valid.TEAM_EXISTS])
     def cmd_delete(self, **kwargs):
         team_name = kwargs.get('team_name')
 
@@ -70,7 +71,7 @@ class TeamLieutenant(GenericLieutenant):
         self._team_table.delete_by_ids([team_id])
         print(f'Team deleted: {team_name}')
 
-    @validate_inputs(to_validate=['team_exists', 'repo_exists', 'team_repo_not_exist'])
+    @validate_inputs(to_validate=[Valid.TEAM_EXISTS, Valid.REPO_EXISTS, Valid.TEAM_REPO_NOT_EXISTS])
     def cmd_link(self, **kwargs):
         team_name = kwargs.get('team_name')
         repo_name = kwargs.get('repo_name')
@@ -83,7 +84,7 @@ class TeamLieutenant(GenericLieutenant):
         self._team_repo_table.get_or_create(team_name, team_id, repo_id, role)
         print(f'Repository {repo_name} linked with {team_name} team.')
 
-    @validate_inputs(to_validate=['team_exists', 'repo_exists', 'team_repo_exists'])
+    @validate_inputs(to_validate=[Valid.TEAM_EXISTS, Valid.REPO_EXISTS, Valid.TEAM_REPO_EXISTS])
     def cmd_unlink(self, **kwargs):
         team_name = kwargs.get('team_name')
         repo_name = kwargs.get('repo_name')
@@ -99,7 +100,7 @@ class TeamLieutenant(GenericLieutenant):
         self._team_repo_table.delete_by_ids([team_repo_id])
         print(f'Repository {repo_name} unlinked from {team_name}')
 
-    @validate_inputs(to_validate=['team_exists', 'user_not_exist'])
+    @validate_inputs(to_validate=[Valid.TEAM_EXISTS, Valid.USER_NOT_EXISTS])
     def cmd_user_add(self, **kwargs):
         team_name = kwargs.get('team_name')
         user_name = kwargs.get('add')
@@ -110,7 +111,7 @@ class TeamLieutenant(GenericLieutenant):
         self._user_table.get_or_create(user_name, team_id)
         print(f'User {user_name} added to {team_name}')
 
-    @validate_inputs(to_validate=['team_exists', 'user_exists'])
+    @validate_inputs(to_validate=[Valid.TEAM_EXISTS, Valid.USER_EXISTS])
     def cmd_user_remove(self, **kwargs):
         team_name = kwargs.get('team_name')
         user_name = kwargs.get('remove')

@@ -31,6 +31,7 @@ class SystemLieutenant(GenericLieutenant):
         self._gh_link.check_status()
 
     def cmd_reconcile(self):
+        # TODO : currently missing logic for this
         pass
 
     @staticmethod
